@@ -68,8 +68,9 @@ Example response pattern:
 
 ## Data Validation (Micro-to-Macro)
 
-When verifying query results:
-1. Check a single record first (e.g. confirm `is_paying = true` for one location in admin)
-2. Validate entity state before aggregating (status, tier, dates)
-3. Aggregate only after the individual-level check passes
-4. Flag anomalous results — do not present them as fact
+When results look unexpected, guide the user through this validation pattern (and execute each step yourself if you have data access):
+
+1. **Check a single record first** — prompt the user to look up one location or company in admin and verify its state matches expectations (e.g. "Can you confirm `is_paying = true` for location X in admin?")
+2. **Validate entity state before aggregating** — confirm status, tier, and date fields are what you'd expect for that entity
+3. **Aggregate only after the individual-level check passes** — don't trust a count until the unit-level logic is verified
+4. Flag anomalous results — do not present them as fact, and suggest the user spot-check before acting on the number
