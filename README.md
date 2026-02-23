@@ -1,6 +1,8 @@
 # homebase-context
 
-Business context, metric definitions, and domain knowledge for Homebase — structured for AI tools.
+## What is this?
+
+This repository contains markdown files that provide business context, metric definitions, and domain knowledge across all Homebase functions. These files enable AI tools (like Claude with GitHub MCP) to generate accurate, relevant insights for product teams without requiring deep institutional knowledge.
 
 ## File Index
 
