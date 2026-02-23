@@ -16,7 +16,7 @@ Load for any SQL or data query. Covers environment setup and data layer routing.
 
 | Layer | Datasets | When to use |
 |---|---|---|
-| **Semantic (use first)** | `bizops.*`, `public.*` (and others TBD) | Business logic is baked in; use for all standard metrics and definitions |
+| **Semantic (use first)** | `bizops.*`, `public.*`, `dbt.*` | Business logic is baked in; use for all standard metrics and definitions |
 | **Raw (use only if needed)** | `postgres.*`, `ext_amplitude.*` | Source system tables; only go here if semantic layer doesn't have what's needed |
 
 Priority order: **semantic layer → raw layer**. Never query raw tables if a semantic equivalent exists.
