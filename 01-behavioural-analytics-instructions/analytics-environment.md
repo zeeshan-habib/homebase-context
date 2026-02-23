@@ -1,6 +1,6 @@
 # Analytics Environment
 
-Overview of Homebase's analytics environment. Use this to determine where to query data and which layer to use.
+Load for any SQL or data query. Covers environment setup and data layer routing.
 
 ---
 
