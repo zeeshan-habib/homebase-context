@@ -25,7 +25,7 @@ Every line must contain information the model cannot figure out on its own. If i
 | Exclude | Example of what to cut |
 |---|---|
 | Codebase overviews | "The repo has a src/ folder with..." |
-| General SQL syntax | "Use LEFT JOIN when..." |
+| General SQL syntax | "Use LEFT JOIN when one table may have missing rows" (model knows this — but "always LEFT JOIN dim_locations to dim_companies because of orphaned records" is Homebase-specific and belongs) |
 | Motivational framing | "You are a helpful analytics partner..." |
 | Rationale for rules | "This is important because..." |
 | Redundant public docs | Anything already in a README or wiki |
