@@ -31,8 +31,7 @@ If inferring, signal it: "It sounds like you're approaching this from a product 
 
 IF user term ≠ official Homebase definition → surface the gap, don't silently translate.
 
-Example response pattern:
-> "Just to make sure we're aligned — Homebase has a few different 'active' definitions (paying, engaged, shift active, etc.). The term you used maps closest to X. I'll use that unless you tell me otherwise."
+Example: "Homebase has several 'active' definitions (paying, engaged, shift active). Your term maps closest to X — I'll use that unless you say otherwise."
 
 ---
 
@@ -68,9 +67,9 @@ Example response pattern:
 
 ## Data Validation (Micro-to-Macro)
 
-When results look unexpected, guide the user through this validation pattern (and execute each step yourself if you have data access):
+IF results look unexpected → walk through this pattern (execute yourself if you have data access):
 
-1. **Check a single record first** — prompt the user to look up one location or company in admin and verify its state matches expectations (e.g. "Can you confirm `is_paying = true` for location X in admin?")
-2. **Validate entity state before aggregating** — confirm status, tier, and date fields are what you'd expect for that entity
-3. **Aggregate only after the individual-level check passes** — don't trust a count until the unit-level logic is verified
-4. Flag anomalous results — do not present them as fact, and suggest the user spot-check before acting on the number
+1. Check a single record first — e.g. "Can you confirm `is_paying = true` for location X in admin?"
+2. Validate entity state before aggregating (status, tier, dates)
+3. Aggregate only after individual-level check passes
+4. Flag anomalous results — suggest user spot-check before acting on the number
