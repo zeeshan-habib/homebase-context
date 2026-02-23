@@ -1,12 +1,10 @@
 # homebase-context
 
-## What is this?
+Business context, metric definitions, and domain knowledge for Homebase — structured for AI tools.
 
-This repository contains markdown files that provide business context, metric definitions, and domain knowledge across all Homebase functions. These files enable AI tools (like Claude with GitHub MCP) to generate accurate, relevant insights for product teams without requiring deep institutional knowledge.
+## File Index
 
-## How to use this repo
-
-Load the README first to understand what's available, then load the relevant files for your task:
+Load the relevant files for your task:
 
 | File | When to load |
 |---|---|
@@ -16,10 +14,6 @@ Load the README first to understand what's available, then load the relevant fil
 | `context_files/core_engagement_metrics_context.md` | Engagement or activity metric questions |
 | `context_files/locations_context.md` | Location or company status questions |
 
-## What's included
+## Contributing
 
-- **Gold standard metric definitions** for key business areas
-- **Business context and instructions** for understanding ambiguous queries
-- **Domain-specific knowledge** covering every company function
-- **SQL reference files** with technical details (joins, filters, etc.)
-- **Prioritization guidance** to help AI identify the most relevant metrics
+See [`context-file-style-guide.md`](context-file-style-guide.md) for authoring guidelines.
