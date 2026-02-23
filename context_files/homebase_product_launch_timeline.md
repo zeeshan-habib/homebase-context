@@ -1,6 +1,6 @@
 # Homebase Product Launch Timeline
 
-*Sources: Slack #celebration, #general, #business_reviews • Compiled February 2026*
+*Sources: Slack #celebration, #general, #business_reviews, #team-cashout, #p-and-p-core, #p-and-p-comms • Compiled February 2026*
 
 ---
 
@@ -30,6 +30,34 @@ Multi-product launch during the early COVID reopening period, alongside a full p
 
 ## July 2021 — Payroll + Cash Out (Public Announcement)
 Official public launch of Homebase Payroll and Cash Out, coinciding with a fundraise announcement on "LWOM Day 4." John Waldmann noted: *"These products and the fundraise may be old news for us, but it's still a big deal."*
+
+---
+
+## February–March 2022 — Cash Out Instant Delivery Fee Increase
+Price of instant Cash Out delivery raised from **$3.99 → $4.99**.
+
+- Experiment launched ~Feb 10 at 10% of companies
+- Rolled out to all users on **March 1, 2022**
+- Rationale: underpriced vs. competitors; proceeds used to expand employee cash-out limits
+- Result: no significant volume drop; best weekly Cash Out revenue ever ($70K+/week, ~$3.7M annualized)
+
+---
+
+## May–July 2022 — SaaS Plan Price Increase
+Homebase's first broad subscription price increase, affecting Essentials and Plus plans. Rolled out in phases:
+
+| Date | Change |
+|------|--------|
+| May 20 | Annual discount reduced from **30% → 20%** for new subscriptions and upgrades |
+| May 23–25 | Customer comms sent; sales tax added in applicable states (effective May 25) |
+| June 28 | New prices live for Homebase-billed (Braintree + Stripe) customers |
+| July 31 | Clover-billed customers' price increase takes effect |
+
+**New prices (effective June 28):**
+- Essentials: **$24.95/mo**
+- Plus: **$59.95/mo**
+
+**Retention offer:** Grandfathered customers (on older pricing) received a **25% loyalty discount** on the new price. Final-save discounts for escalated customers: Essentials Monthly $14.50, Plus Monthly $37.50.
 
 ---
 
@@ -94,6 +122,17 @@ AI-focused launch campaign timed to National Small Business Week. Positioned as 
 - **401(k)** — retirement plan offering
 - **AI Chat** — conversational support for managers and employees
 - New employee-facing financial features
+
+---
+
+## September 2025 — Pricing Migration (New Pricing Structure)
+An ongoing migration of existing customers to a new pricing structure. As of September 9, 2025 (per WBR):
+
+- **48%** of eligible customers moved to new pricing
+- **36%** of Stripe-billed customers switched
+- ~4.8K monthly customers still pending migration (targeting 52–53% total)
+- Max attainable for the month estimated at **65–66%** of eligible locations
+- 3–4K locations showing data discrepancies in reporting; investigation ongoing for mobile-billed customers
 
 ---
 
