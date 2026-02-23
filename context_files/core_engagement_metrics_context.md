@@ -1,23 +1,96 @@
-# Homebase Engagement Metrics: Business Context Guide
+# Homebase Organizational Context
 
-## Overview
+## Business Overview
 
-This document provides business context for Homebase's core product engagement metrics. These metrics measure how actively customers use various features of the Homebase workforce management platform, which primarily serves small businesses in the restaurant and retail industries.  These specific metrics are noted to be the 'golden' standard for how we think about engagement and should be referenced first with questions/prompts regarding engagement overall as well as specific features.  
+B2B workforce management SaaS with paid and non-paid customers. Additional features may be added through various pricing models. Customers are business owners and end users will include managers and employees.
 
 ---
 
-## Instructions for LLM Models
+## Key Entities
 
-When using this document as a reference for creating SQL queries on Homebase's database to answer business-related questions.  Not all fields/definitions someone many ask on will be contained in these files, so if not in here or any other provided documentation, ask for clarity and even list out the definitions being used to calculate for clarity.
+### Location
+The **primary unit of engagement measurement**. A location represents a single physical business site (e.g., one restaurant, one retail store). Most engagement metrics are calculated at the location level first, then rolled up to the company level. *When someone refers to 'users', they most likely are asking about locations, best to clarify if unclear.
+
+### Company
+A business entity that may own one or more locations. A company is considered "engaged" with a feature if **any** of its locations are engaged with that feature.
+
+### Users 
+Any individual who uses the Homebase product, could be a a business Owner, a Manager/General Manager or an employee at a business.
+
+### Jobs
+The specific relationship that describes the employee's role at the business.
 
 
-### Primary Tables
+---
+
+## Core Engagement & Active Metric Definitions
+
+The following metrics are considered 'golden' standard and measure how actively customers use Homebase features. Use these definitions first regarding questions around overall and feature specific engagement.
+
+### Overall Engagement
+Whether businesses are actively using Homebase's core value proposition (scheduling and/or time tracking) AND have active management oversight.
+A **location is engaged** if it meets ALL of these criteria:
+1. **Core product usage**: Either time tracking engaged OR scheduling engaged in the past 7 days
+2. **Management activity**: Any owner, admin, or manager (OAM) activity in the past 30 days
+
+| Column | Table | Description |
+|--------|-------|-------------|
+| `engagement_boolean` | `bizops.product_location_engagement_metrics` | 1 if location is engaged on this date |
+| `engagement_boolean_30d_ago` | `bizops.product_location_engagement_metrics` | 1 if location was engaged 30 days prior |
+
+### DAU / WAU / MAU 
+Common questions around feature usage include counting distinct 'active' users on a daily, weekly or monthly basis.  These relate more to specific features.
+
+### Team App Paying 
+A company / location which are on one of our Team App paying plans (Essentials = 2, Plus = 3, AiO =  4).
+
+| Column | Table | Description |
+|--------|-------|-------------|
+| `tier` | `public.locations` | 2, 3 or 4 if CURRENTLY paying |
+| `tier` | `dbt.active_paying_history_for_looker` | 2, 3 or 4 if paying on specific day via snapshot |
+
+### Payroll Paying
+A company / location which are paying for Payroll. Monthly subscription model with additional fees per employee payroll run.
+More info on calculations provided in Payroll Domain Specific Files.
+
+### Payroll Active 
+A company / location is considered Payroll Active if they ran payroll within a given time period, usually within a month or 30 day lookback window. 
+More info on calculations provided in Payroll Domain Specific Files.
+
+### 2D7
+A company / location on two different days, within a continuous 7 day window, with at least one employee activity (like log in) on each day. Usually measured either on the very first 7 days after signup, or any given 7 day interval.  Location rolls up to company. 
+| Column | Table | Description |
+|--------|-------|-------------|
+| `twod7_active_today_location` | `dbt.active_paying_history_for_looker` |  `true` if active on day via snapshot  |
+| `signup_2d7` | `public.companies` | `true` if 2d7 active from signup |
+
+
+### 1D1 
+A company / location with activity (A new company/user inviting an employee and the employee logs in) within first 24 hr of signup. Location rolls up to company. 
+
+| Column | Table | Description |
+|--------|-------|-------------|
+| `signup_1d1` | `public.companies` | `true` if 1d1 active at day of signup |
+
+
+### 2d30
+A company / location on two different days, within a continuous 30 day window, with at least one employee activity (like log in) on each day. Location rolls up to company.  
+
+| Column | Table | Description |
+|--------|-------|-------------|
+| `two_d_thirty_active_this_month_location` | `dbt.active_paying_history_for_looker` |  `true` if active one day via snapshot  |
+| `signup_2d30` | `public.companies` | `true` if 2d30 active from signup |
+
+---
+
+## Primary Tables
 
 | Table | Schema | Description |
 |-------|--------|-------------|
 | `product_location_engagement_metrics` | `bizops` | Primary source for location-level engagement booleans. One row per location per date. |
 | `product_company_engagement_metrics` | `bizops` | Company-level metrics (HR docs, messaging). One row per company per date. |
-| `locations` | `postgres` | Location master data; used to join locations to their parent company. |
+| `locations` | `public`| Location master data; used to join locations to their parent company. |
+| `companies` | `public`| Company master data; locations join up to their parent company |
 
 ### Table Relationships
 
@@ -41,37 +114,8 @@ bizops.product_location_engagement_metrics (location_id, date)
 
 ---
 
-## Key Entities
 
-### Location
-The **primary unit of engagement measurement**. A location represents a single physical business site (e.g., one restaurant, one retail store). Most engagement metrics are calculated at the location level first, then rolled up to the company level.
-
-### Company
-A business entity that may own one or more locations. A company is considered "engaged" with a feature if **any** of its locations are engaged with that feature.
-
-### Owner
-The Owner of the business, the user who is managing their business at Homebase.
-
----
-
-## Core Engagement Definition
-
-A **location is engaged** if it meets ALL of these criteria:
-1. **Core product usage**: Either time tracking engaged OR scheduling engaged in the past 7 days
-2. **Management activity**: Any owner, admin, or manager (OAM) activity in the past 30 days
-
-This definition ensures we're measuring businesses that are actively using Homebase's core value proposition (scheduling and/or time tracking) AND have active management oversight.
-
-### Data Reference: Core Engagement
-
-| Column | Table | Description |
-|--------|-------|-------------|
-| `engagement_boolean` | `bizops.product_location_engagement_metrics` | 1 if location is engaged on this date |
-| `engagement_boolean_30d_ago` | `bizops.product_location_engagement_metrics` | 1 if location was engaged 30 days prior |
-
----
-
-## Feature Engagement Definitions
+## Additional Feature Engagement Definitions
 
 ### Time Tracking Engaged
 **What it measures**: Active use of Homebase's clock-in/clock-out functionality.
@@ -349,7 +393,22 @@ This definition ensures we're measuring businesses that are actively using Homeb
 | Messaging | `messaging_engaged_boolean` | `messaging_engaged_boolean_30d_ago` | 7 days |
 
 ---
+## General Rules 
 
+2. Default to last 30 days for time ranges unless otherwise specified
+3. Exclude test locations
+4. Exclude internal Homebase employees where `email` contains "@joinhomebase.com"
+
+---
+## Common Disambiguation 
+
+**Handling Missing Context** Prompts may refer to definitions/logic that is not defined in any of the context files.  In the event that happens, ask for clarity and go as far as list out out possible relevant context.
+
+**Engaged vs Active** If prompt/question is abstract when referencing utilization of our product, ask clarifying questions on to determine if they referring already defined engagement metrics, active users or something else entirely.  Include the definition that is being used in response to help clarify on the source of truth.
+
+**Entities**  If prompt/question is abstract when referencing 'users', ask for clarification on whether to reference locations, companies, Owners, General Managers, Managers, employees, etc to help inform which entity they wish to conduct analysis on. It is usually safe to assume they are looking at locations, but make sure to specify if making that assumption.
+
+---
 ## Common Analysis Patterns
 
 1. **Feature adoption funnel**: What % of time tracking engaged locations are also scheduling engaged? messaging engaged?
@@ -360,10 +419,6 @@ This definition ensures we're measuring businesses that are actively using Homeb
 
 4. **Core vs expansion engagement**: Ratio of locations engaged with core features vs. expansion features (hiring, messaging, HR docs)
 
-## Common Disambiguation 
-**Engaged vs Active** If a prompt/question is abstract when referencing utilization of our product, or any of our specific features, ask clarifying questions on if they are referring to our business defined engagement metrics, MAU definition of using the product/feature once within a month or if they are referring to something else.  Provide the definition to help clarify so it is clear on where to look for the source of truth.
-
-**Entities**  If a prompt/question is abstract when referencing users, ask for clarification if they are asking about locations, companies, Owners, General Managers, Managers, employees, etc to help inform which entity they wish to conduct analysis on. It is usually safe to assume they are looking at locations, but make sure to specify that if making that assumption.
 ---
 
 ## Example SQL Queries
