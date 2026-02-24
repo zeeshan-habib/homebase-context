@@ -1,6 +1,6 @@
 # Homebase Product Launch Timeline
 
-*Sources: Slack #celebration, #general, #business_reviews, #team-cashout, #p-and-p-core, #p-and-p-comms • Compiled February 2026*
+*Sources: Slack #celebration, #general, #business_reviews, #team-cashout, #p-and-p-core, #p-and-p-comms • QBR/MBR Google Slides decks (Q4 '22 MBR Deep-dive, Feb 2023 MBR, Aug 2023 MBR, Q3 2023 QBR, Q1 2025 QBR) • Compiled February 2026*
 
 ---
 
@@ -66,6 +66,14 @@ Voted into production launch by the team.
 
 ---
 
+## December 2022 — Multi-Location Enforcement: Initial Run
+First execution of Homebase's multi-location enforcement (MLE) policy, requiring businesses with multiple locations on a free plan to upgrade to a paid plan.
+
+- **373 locations upgraded** as a result
+- Upgrade mix: 5% All-in-One, 63% Essentials, 31% Plus
+
+---
+
 ## February 2023 — Talkdesk (Call Platform Migration)
 Customer care teams migrated from Aircall to Talkdesk, enabling improved reporting, queue monitoring, and manager tools. Described as a "nearly flawless launch."
 
@@ -73,6 +81,17 @@ Customer care teams migrated from Aircall to Talkdesk, enabling improved reporti
 
 ## May 2023 — Product Releases Page
 Launched joinhomebase.com/product-releases/ to give customers a central hub for recent feature announcements.
+
+---
+
+## Q2–Q3 2023 — Multi-Location Enforcement: Re-enrollment and Pause
+After being deprioritized in early 2023, MLE was re-launched alongside an Employee Caps enforcement initiative targeting Stripe-billed customers.
+
+- **Q2 2023**: Initial MLE + EE Cap experiment enrollment completed for Packaging 1 (Stripe-billed); ~$74K combined MRR lift from enforcement initiatives to date by August
+- **Q3 2023**: MLE enrolled 1,100 companies → **525 locations upgraded**; combined ~$39K net new MRR from MLE + EE Cap enforcement in Q3
+- Clover enforcement attempted but rolled back due to UX issues causing accidental location archivals
+- MLE subsequently **paused**: "eligible" lists found to mostly include already-paying or single-location customers, explaining shortfall vs. revenue goals
+- **Next steps**: Rethink the MLE experience before re-releasing; ~5K Clover + Stripe/mobile-billed locations remained unenforced
 
 ---
 
