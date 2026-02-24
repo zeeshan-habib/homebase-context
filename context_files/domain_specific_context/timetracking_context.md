@@ -13,6 +13,8 @@ Most important joins and field descriptions can be derived from the looker explo
 
 **Payroll Assistant MAU/WAU** Counts total locations that have used a Payroll Assistant within each month. Aggregate to calendar month of last 30 days.  
 
+**# of Timecards Created** Counts number of Timecards that were created within a given time period.
+
 ## Explore Structure & Join Map
 
 ```
