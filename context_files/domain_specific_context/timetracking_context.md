@@ -1,4 +1,4 @@
-# Timetracking — Schema & Business Context
+# Timetracking Specific Context
 
 
 **When to use this file:** Questions about timecards, clock-in/out patterns, breaks, manager edits, payroll assistants, ACO/ACI.
