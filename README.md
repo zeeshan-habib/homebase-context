@@ -15,6 +15,7 @@ Load the relevant files for your task:
 | `context_files/homebase_glossary_table.md` | When metric definitions or terminology are needed |
 | `context_files/core_engagement_metrics_context.md` | Engagement or activity metric questions |
 | `context_files/locations_context.md` | Location or company status questions |
+| `context_files/date_conventions_context.md` | Any query with date filtering, grouping by period, period-over-period comparisons, or cohort day windows (D1, D14, D30, etc.) |
 
 ## Contributing
 
