@@ -5,6 +5,7 @@
 
 **Context Source** `core_product.model.lkml` → 
 Most important joins and field descriptions can be derived from the looker explore file  `timecard_metrics` in the `core_product.model.lkml` in the `pioneerworks/looker` repo.  
+
 ---
 
 ## Key Metrics 
