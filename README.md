@@ -17,6 +17,7 @@ Load the relevant files for your task:
 | `03-data/locations.md` | Location or company status questions |
 | `03-data/date-conventions.md` | Any query with date filtering, grouping by period, period-over-period comparisons, or cohort day windows (D1, D14, D30, etc.) |
 | `03-data/product-domains/timetracking.md` | Timecards, clock-in/out, breaks, manager edits, ACO/ACI |
+| `03-data/product-domains/scheduling.md` | Shifts, schedules, open shifts, publishing, shift edits, shift trades |
 
 ## Contributing
 
