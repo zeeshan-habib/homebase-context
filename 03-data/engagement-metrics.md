@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document is the **single source of truth** for Homebase's product engagement metric definitions. These metrics measure how actively customers use various Homebase features and are considered the "golden standard."
+This document is the **single source of truth** for Homebase's product engagement metric definitions. These metrics measure how actively customers use various Homebase features.
 
 **When to use this file:** Any question about general engagement, feature adoption, active locations/companies, or DAU/WAU/MAU.
 
@@ -47,14 +47,13 @@ This ensures we measure businesses actively using Homebase's core value proposit
 
 ### Location-Level Features
 
-#### Time Tracking Engaged
-**Measures:** Active use of clock-in/clock-out functionality.
-**Lookback:** 7 days
-**Threshold:** 3+ timecards OR 20%+ of roster with a timecard
-**Requirement:** At least one timecard must belong to an Employee (not just managers testing).
-**Context:** One of two "core" engagement features. Essential for payroll, compliance, and labor cost management.
+#### OAM Activity
+**Measures:** Any Owner, Admin, or Manager activity in the product.
+**Lookback:** 30 days
+**Threshold:** Any UX event activity
+**Context:** Component of the core engagement definition. Ensures active management oversight.
 
-| `time_tracking_engaged_boolean` | `time_tracking_engaged_boolean_30d_ago` |
+| `oam_activity_boolean` | `oam_activity_boolean_30d_ago` |
 |---|---|
 
 #### Scheduling Engaged
@@ -65,15 +64,6 @@ This ensures we measure businesses actively using Homebase's core value proposit
 **Context:** One of two "core" engagement features. Critical for workforce planning and communication.
 
 | `scheduling_engaged_boolean` | `scheduling_engaged_boolean_30d_ago` |
-|---|---|
-
-#### Mobile Time Tracking Engaged
-**Measures:** Employees clocking in/out via the Homebase mobile app (vs. web or timeclock device).
-**Lookback:** 7 days
-**Threshold:** 3+ mobile timecards OR 20%+ of roster with a mobile timecard
-**Context:** Mobile adoption indicates deeper product integration. Important for field workers or businesses without a fixed timeclock.
-
-| `mobile_time_tracking_engaged_boolean` | `mobile_time_tracking_engaged_boolean_30d_ago` |
 |---|---|
 
 #### Shift Trades Engaged
@@ -135,28 +125,6 @@ This ensures we measure businesses actively using Homebase's core value proposit
 | `department_management_engaged_boolean` | `department_management_engaged_boolean_30d_ago` |
 |---|---|
 
-#### Overtime Preferences Engaged
-**Measures:** Use of overtime tracking and alerting features.
-**Lookback:** 7 days
-**Requirements (ALL):**
-- Essentials plan or higher
-- Any overtime settings enabled
-- Time tracking engaged
-**Context:** Critical for labor cost control and compliance.
-
-| `overtime_preferences_engaged_boolean` | `overtime_preferences_engaged_boolean_30d_ago` |
-|---|---|
-
-#### Break Preferences Engaged
-**Measures:** Use of break tracking and enforcement features.
-**Lookback:** 7 days
-**Requirements (ALL):**
-- 1+ break type enabled where at least one is mandatory
-- Time tracking engaged
-**Context:** Break compliance is a major legal requirement in many jurisdictions.
-
-| `break_preferences_engaged_boolean` | `break_preferences_engaged_boolean_30d_ago` |
-|---|---|
 
 #### Shift Notes Engaged
 **Measures:** Use of shift-level notes and instructions.
@@ -167,15 +135,6 @@ This ensures we measure businesses actively using Homebase's core value proposit
 **Context:** Indicates scheduling is used for more than just time assignment.
 
 | `shift_notes_engaged_boolean` | `shift_notes_engaged_boolean_30d_ago` |
-|---|---|
-
-#### OAM Activity
-**Measures:** Any Owner, Admin, or Manager activity in the product.
-**Lookback:** 30 days
-**Threshold:** Any UX event activity
-**Context:** Component of the core engagement definition. Ensures active management oversight.
-
-| `oam_activity_boolean` | `oam_activity_boolean_30d_ago` |
 |---|---|
 
 ---

@@ -16,18 +16,49 @@ Most important joins and field descriptions can be derived from the looker explo
 
 **# of Timecards Created** Counts number of Timecards that were created within a given time period.
 
-## Explore Structure & Join Map
+## Time Tracking Feature Engagement Definitions
 
-```
-timecards  (base view — bizops.timecards + postgres.jobs)
-  ├── timecard_clockouts      JOIN ON timecards.timecard_id = timecard_clockouts.timecard_id
-  ├── timecard_clockins       JOIN ON timecards.timecard_id = timecard_clockins.timecard_id
-  ├── timebreaks_enriched_with_edits  JOIN ON timecards.timecard_id = timebreaks_enriched_with_edits.timecard_id
-  ├── timecard_manager_notes  JOIN ON timecards.timecard_id = timecard_manager_notes.timecard_id
-  ├── engagement_metrics      JOIN ON timecards.location_id = engagement_metrics.location_id
-  │                                AND engagement_metrics.date_date >= '01-01-25'
-  └── locations_v2            JOIN ON timecards.location_id = locations_v2.location_id
-```
+#### Time Tracking Engaged
+**Measures:** Active use of clock-in/clock-out functionality.
+**Lookback:** 7 days
+**Threshold:** 3+ timecards OR 20%+ of roster with a timecard
+**Requirement:** At least one timecard must belong to an Employee (not just managers testing).
+**Context:** One of two "core" engagement features. Essential for payroll, compliance, and labor cost management.
+
+| `time_tracking_engaged_boolean` | `time_tracking_engaged_boolean_30d_ago` |
+|---|---|
+
+#### Mobile Time Tracking Engaged
+**Measures:** Employees clocking in/out via the Homebase mobile app (vs. web or timeclock device).
+**Lookback:** 7 days
+**Threshold:** 3+ mobile timecards OR 20%+ of roster with a mobile timecard
+**Context:** Mobile adoption indicates deeper product integration. Important for field workers or businesses without a fixed timeclock.
+
+| `mobile_time_tracking_engaged_boolean` | `mobile_time_tracking_engaged_boolean_30d_ago` |
+|---|---|
+
+#### Overtime Preferences Engaged
+**Measures:** Use of overtime tracking and alerting features.
+**Lookback:** 7 days
+**Requirements (ALL):**
+- Essentials plan or higher
+- Any overtime settings enabled
+- Time tracking engaged
+**Context:** Critical for labor cost control and compliance.
+
+| `overtime_preferences_engaged_boolean` | `overtime_preferences_engaged_boolean_30d_ago` |
+|---|---|
+
+#### Break Preferences Engaged
+**Measures:** Use of break tracking and enforcement features.
+**Lookback:** 7 days
+**Requirements (ALL):**
+- 1+ break type enabled where at least one is mandatory
+- Time tracking engaged
+**Context:** Break compliance is a major legal requirement in many jurisdictions.
+
+| `break_preferences_engaged_boolean` | `break_preferences_engaged_boolean_30d_ago` |
+|---|---|
 
 ## Key Business Logic & Caveats
 
