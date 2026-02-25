@@ -56,25 +56,6 @@ This ensures we measure businesses actively using Homebase's core value proposit
 | `oam_activity_boolean` | `oam_activity_boolean_30d_ago` |
 |---|---|
 
-#### Scheduling Engaged
-**Measures:** Active use of shift scheduling.
-**Lookback:** 7 days
-**Threshold:** 3+ scheduled shifts OR 20%+ of roster with a scheduled shift
-**Requirement:** At least one shift must belong to an Employee.
-**Context:** One of two "core" engagement features. Critical for workforce planning and communication.
-
-| `scheduling_engaged_boolean` | `scheduling_engaged_boolean_30d_ago` |
-|---|---|
-
-#### Shift Trades Engaged
-**Measures:** Use of shift swap/trade functionality between employees.
-**Lookback:** 7 days
-**Threshold:** 2+ shift trades OR 10%+ of roster with a shift trade
-**Context:** Lower threshold — shift trades are situational. Indicates employee self-service adoption.
-
-| `shift_trades_engaged_boolean` | `shift_trades_engaged_boolean_30d_ago` |
-|---|---|
-
 #### Time Offs Engaged
 **Measures:** Use of time-off request system.
 **Lookback:** 7 days
@@ -93,17 +74,6 @@ This ensures we measure businesses actively using Homebase's core value proposit
 | `hiring_engaged_boolean` | `hiring_engaged_boolean_30d_ago` |
 |---|---|
 
-#### Geofencing Engaged
-**Measures:** Use of location-based clock-in/out restrictions.
-**Lookback:** 7 days
-**Requirements (ALL):**
-- Proximity enforcement enabled in settings
-- On Essentials plan or higher
-- Mobile time tracking engaged
-**Context:** Premium feature requiring paid plan. Indicates sophisticated time theft prevention.
-
-| `geofencing_engaged_boolean` | `geofencing_engaged_boolean_30d_ago` |
-|---|---|
 
 #### Manager Log Engaged
 **Measures:** Use of manager communication/logging feature.
@@ -125,17 +95,6 @@ This ensures we measure businesses actively using Homebase's core value proposit
 | `department_management_engaged_boolean` | `department_management_engaged_boolean_30d_ago` |
 |---|---|
 
-
-#### Shift Notes Engaged
-**Measures:** Use of shift-level notes and instructions.
-**Lookback:** 7 days
-**Requirements (ALL):**
-- At least one shift note attached to a shift scheduled in the last 7 days
-- Scheduling engaged
-**Context:** Indicates scheduling is used for more than just time assignment.
-
-| `shift_notes_engaged_boolean` | `shift_notes_engaged_boolean_30d_ago` |
-|---|---|
 
 ---
 

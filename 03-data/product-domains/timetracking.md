@@ -60,12 +60,25 @@ Most important joins and field descriptions can be derived from the looker explo
 | `break_preferences_engaged_boolean` | `break_preferences_engaged_boolean_30d_ago` |
 |---|---|
 
+#### Geofencing Engaged
+**Measures:** Use of location-based clock-in/out restrictions.
+**Lookback:** 7 days
+**Requirements (ALL):**
+- Proximity enforcement enabled in settings
+- On Essentials plan or higher
+- Mobile time tracking engaged
+**Context:** Premium feature requiring paid plan. Indicates sophisticated time theft prevention.
+
+| `geofencing_engaged_boolean` | `geofencing_engaged_boolean_30d_ago` |
+|---|---|
 ## Key Business Logic & Caveats
 
 - **"Manager Modified"** is the broadest edit flag — covers manager added, edited, or deleted. Use this for OKR tracking on manager time savings.
 - **Payroll Assistants** are features designed to help assist OAMs by saving time spent on timetracking/payroll. Currently, tiers 3, 4 and non-Clover locations have access to these features.
 - **ACO (Assisted Clock Out)** a type of Payroll Assistant.  Counts only when a clock-out via ACO is either auto-approved or manager-approved. A submitted but unresolved ACO request does not count. Initial rollout on 8/16/2025.  GA on 01/16/2026
+`postgres.time_tracking_timecard_change_requests.status` = 'approved' AND `postgres.time_tracking_timecard_change_requests.source` = 'assisted_clock_out'
 - **ACI (Assisted Clock In)** A type of Payroll Assistant. Same logic as ACO for clock-ins. Initial rollout on 12/10/2025. GA on 02/03/2026.
+`postgres.time_tracking_timecard_change_requests.status` = 'approved' AND `postgres.time_tracking_timecard_change_requests.source` = 'assisted_clock_in'
 - **`is_late_clock_out` threshold** is 10 minutes after scheduled shift end.
 - **Unscheduled shifts** (`shift_unscheduled = true`) don't have a meaningful scheduled end time — be careful with late clock-out calculations on these.
 - **`engagement_metrics` join** is filtered to `>= '01-01-25'` for performance. Always add a matching timecard date filter.

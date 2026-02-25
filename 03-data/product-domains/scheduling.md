@@ -14,7 +14,39 @@
 | % Roster Scheduled | `percent_roster_w_sched_shift` from `bizops.product_scheduling_usage_metrics` | Percentage of active roster with at least one scheduled shift |
 | Relevant Edits per Shift | Looker `shift_events` | Average meaningful edits per shift, excluding publish, timecard ops, auto-rounding, and sync events |
 
-For scheduling engagement boolean definitions (`scheduling_engaged_boolean`, `shift_trades_engaged_boolean`, `shift_notes_engaged_boolean`), see `engagement-metrics.md`. Do not duplicate those definitions here.
+## Time Tracking Feature Engagement Definitions
+
+#### Scheduling Engaged
+**Measures:** Active use of shift scheduling.
+**Lookback:** 7 days
+**Threshold:** 3+ scheduled shifts OR 20%+ of roster with a scheduled shift
+**Requirement:** At least one shift must belong to an Employee.
+**Context:** One of two "core" engagement features. Critical for workforce planning and communication.
+
+| `scheduling_engaged_boolean` | `scheduling_engaged_boolean_30d_ago` |
+|---|---|
+
+#### Shift Trades Engaged
+**Measures:** Use of shift swap/trade functionality between employees.
+**Lookback:** 7 days
+**Threshold:** 2+ shift trades OR 10%+ of roster with a shift trade
+**Context:** Lower threshold — shift trades are situational. Indicates employee self-service adoption.
+
+| `shift_trades_engaged_boolean` | `shift_trades_engaged_boolean_30d_ago` |
+
+|---|---|
+
+
+#### Shift Notes Engaged
+**Measures:** Use of shift-level notes and instructions.
+**Lookback:** 7 days
+**Requirements (ALL):**
+- At least one shift note attached to a shift scheduled in the last 7 days
+- Scheduling engaged
+**Context:** Indicates scheduling is used for more than just time assignment.
+
+| `shift_notes_engaged_boolean` | `shift_notes_engaged_boolean_30d_ago` |
+|---|---|
 
 ---
 
