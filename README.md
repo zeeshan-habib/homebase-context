@@ -20,4 +20,4 @@ Load the relevant files for your task:
 
 ## Contributing
 
-See [`context-file-style-guide.md`](context-file-style-guide.md) for authoring guidelines.
+See [`context-file-style-guide.md`](context-file-style-guide.md) for authoring guidelines and the [Structure & Plan](https://docs.google.com/document/d/1UM4C-UrP9I7CqhjR829C-B3Se_l_V-TJfcegKkcb2K0/edit) doc for project background, testing framework, and roadmap.
