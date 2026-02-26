@@ -146,8 +146,8 @@ Analytics & Product Glossary
 | **🗄️  Data & Analytics Terms** |  |  |
 | **pLTV** | Predicted Lifetime Value. An ML score predicting the long-term revenue value of a user or signup. Generated 6–8 days after sign-up. Used in Google/Bing ad platform uploads as a conversion value. |  |
 | **APH (Active Paying History)** | Core Homebase data table tracking which locations are active and paying. Referenced in Looker as active\_paying\_history\_v2. |  |
-| **OAM** | Owner, Admin, or Manager. The business-side user role in Homebase (vs. EE/employee). Used in engagement metrics like Engaged Locations and OAM message volume. |  |
-| **EE** | Employee. An employee-level Homebase user. Heavily referenced in Cash Out context — EEs enroll in and take advances. |  |
+| **OAM** | Owner, Admin, or Manager. The business-side user role in Homebase (vs. EE/employee). Used in engagement metrics like Engaged Locations and OAM message volume. | level = 'Manager' or 'General Manager' in postgres.jobs |
+| **EE** | Employee. An employee-level Homebase user. Heavily referenced in Cash Out context — EEs enroll in and take advances. | level = 'Employee' in postgres.jobs |
 | **NHP (New Hire Packet/Process)** | The new employee onboarding flow. Tracked as a completion rate (% of new hires completing NHP). |  |
 | **FTUX** | First-Time User Experience. Onboarding UI shown the first time a user accesses a feature (e.g., first Cash Out modal). |  |
 | **Cohort Analysis** | Analysis of user or location behavior grouped by when they signed up or first took an action. Used extensively for non-repayment maturation and degradation trend analysis. |  |
