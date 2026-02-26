@@ -139,10 +139,36 @@ These flags indicate recent product usage and are typically refreshed on a rolli
 
 | Column | Type | Description |
 |--------|------|-------------|
-| `tier_id` | `number` | The subscription tier/plan the location is currently on. Join to tier reference table for plan names. |
+| `tier_id` | `number` | The subscription tier/plan the location is currently on. See mapping below. |
 | `billing_source` | `string` | Payment source (e.g., "stripe", "apple", "clover"). May not populate until first payment. |
 
-**Business context**: Tier determines feature access. Common tiers include Free, Essentials, Plus, and All-in-One. Many engagement metrics have tier prerequisites (e.g., geofencing requires Essentials+).
+### Tier / Plan Mapping
+
+| tier_id | Plan Name |
+|---------|-----------|
+| 1 | Basic |
+| 2 | Essentials |
+| 3 | Plus |
+| 4 | All-in-One (AiO) |
+
+**Business context**: Tier determines feature access. Many engagement metrics have tier prerequisites (e.g., geofencing requires Essentials+).
+
+### Trial Periods
+
+New locations get a 2-week onboarding trial at Enterprise tier. During an active trial, `tier_id` reflects the trial tier — not a paid plan. Filter out active trials when identifying paying locations.
+
+| Table | Schema | Join | Key Columns |
+|-------|--------|------|-------------|
+| `trial_periods` | `postgres` | `location_id` | `state`, `trial_tier_id`, `downgrade_to_tier_id`, `start_at`, `end_at`, `source` |
+
+| `state` value | Meaning |
+|---------------|---------|
+| `started` | Active trial — `tier_id` is inflated |
+| `completed` | Trial ended, location downgraded |
+| `interrupted` | Trial stopped early (merchant chose a paid plan) |
+
+**Exclude active trials from paying-plan queries:**
+`WHERE location_id NOT IN (SELECT location_id FROM postgres.trial_periods WHERE state = 'started')`
 
 ---
 

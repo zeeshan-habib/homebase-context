@@ -38,19 +38,20 @@ The set of employees (jobs) assigned to a location. Many engagement thresholds a
 
 Unless on trial, Team App subspcriptions follow this pricing model: 
 
+
 | Tier ID | Plan Name | Description | Paying Flag |
-|---------|-----------|-------------| 
-| 0 | Free (Basic) | Free tier with limited features | no |
+|---------|-----------|-------------|-------------|
+| 1 | Free (Basic) | Free tier with limited features | no | 
 | 2 | Essentials | First paid tier — unlocks geofencing, overtime preferences | yes |
 | 3 | Plus | Mid-tier — unlocks department management | yes | 
 | 4 | All-in-One (AiO) | Top tier — all features included | yes |
 
-#### Pricing 
+#### TA Pricing Identifiers in Data
 
-| Column | Table | Description |
+| Column | Table | Description | 
 |--------|-------|-------------|
-| `tier` | `public.locations` | 2, 3, or 4 if CURRENTLY paying |
-| `tier` | `dbt.active_paying_history_for_looker` | 2, 3, or 4 if paying on specific snapshot day |
+| `tier_id` | `public.locations` | 2, 3, or 4 if CURRENTLY paying | 
+| `tier_id` | `dbt.active_paying_history_for_looker` | 2, 3, or 4 if paying on specific snapshot day |
 
 ### Payroll
 

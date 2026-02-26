@@ -79,6 +79,8 @@ Most important joins and field descriptions can be derived from the looker explo
 `postgres.time_tracking_timecard_change_requests.status` = 'approved' AND `postgres.time_tracking_timecard_change_requests.source` = 'assisted_clock_out'
 - **ACI (Assisted Clock In)** A type of Payroll Assistant. Same logic as ACO for clock-ins. Initial rollout on 12/10/2025. GA on 02/03/2026.
 `postgres.time_tracking_timecard_change_requests.status` = 'approved' AND `postgres.time_tracking_timecard_change_requests.source` = 'assisted_clock_in'
+- **ACO/ACI join key:** `time_tracking_timecard_change_requests` joins to `timecards` on `timecard_uuid` (not `timecard_id`). Use `cr.timecard_uuid = tc.timecard_uuid`.
+- **Getting `location_id` from timecards:** `bizops.timecards.location_id` is usually null. Always join through `postgres.jobs` to get the location: `FROM bizops.timecards t LEFT JOIN postgres.jobs j ON t.job_id = j.id` and use `j.location_id`.
 - **`is_late_clock_out` threshold** is 10 minutes after scheduled shift end.
 - **Unscheduled shifts** (`shift_unscheduled = true`) don't have a meaningful scheduled end time — be careful with late clock-out calculations on these.
 - **`engagement_metrics` join** is filtered to `>= '01-01-25'` for performance. Always add a matching timecard date filter.

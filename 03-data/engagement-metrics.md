@@ -26,6 +26,13 @@ JOIN bizops.product_company_engagement_metrics co
   AND co.date = loc.date
 ```
 
+### Boolean columns are integers, not booleans
+Despite the name, all `*_boolean` columns in these tables are stored as integers (`1` = true, `0` = false), not native booleans. Always compare with `= 1` instead of using bare column references.
+- **Correct:** `CASE WHEN engagement_boolean = 1 THEN location_id END`
+- **Incorrect:** `CASE WHEN engagement_boolean THEN location_id END`
+
+The bare-column style may work in Redshift/Looker but will not behave correctly in Databricks.
+
 ---
 
 ## Core Engagement Definition
@@ -176,7 +183,7 @@ This enables month-over-month trend analysis, cohort tracking, and identifying e
 ```sql
 SELECT
     date,
-    COUNT(DISTINCT CASE WHEN engagement_boolean THEN location_id END) AS engaged_locations
+    COUNT(DISTINCT CASE WHEN engagement_boolean = 1 THEN location_id END) AS engaged_locations
 FROM bizops.product_location_engagement_metrics
 WHERE date = '2024-01-15'
 GROUP BY date;
@@ -186,8 +193,8 @@ GROUP BY date;
 ```sql
 SELECT
     DATE_TRUNC('month', date) AS month,
-    COUNT(DISTINCT CASE WHEN engagement_boolean THEN location_id END) AS engaged_locations,
-    COUNT(DISTINCT CASE WHEN engagement_boolean_30d_ago THEN location_id END) AS engaged_locations_30d_ago
+    COUNT(DISTINCT CASE WHEN engagement_boolean = 1 THEN location_id END) AS engaged_locations,
+    COUNT(DISTINCT CASE WHEN engagement_boolean_30d_ago = 1 THEN location_id END) AS engaged_locations_30d_ago
 FROM bizops.product_location_engagement_metrics
 GROUP BY 1
 ORDER BY 1;
@@ -197,10 +204,10 @@ ORDER BY 1;
 ```sql
 SELECT
     loc.date,
-    COUNT(DISTINCT CASE WHEN loc.engagement_boolean THEN loc.location_id END) AS engaged_locs,
-    COUNT(DISTINCT CASE WHEN loc.time_tracking_engaged_boolean THEN loc.location_id END) AS tt_engaged,
-    COUNT(DISTINCT CASE WHEN loc.scheduling_engaged_boolean THEN loc.location_id END) AS sched_engaged,
-    COUNT(DISTINCT CASE WHEN co.messaging_engaged_boolean THEN loc.location_id END) AS msg_engaged
+    COUNT(DISTINCT CASE WHEN loc.engagement_boolean = 1 THEN loc.location_id END) AS engaged_locs,
+    COUNT(DISTINCT CASE WHEN loc.time_tracking_engaged_boolean = 1 THEN loc.location_id END) AS tt_engaged,
+    COUNT(DISTINCT CASE WHEN loc.scheduling_engaged_boolean = 1 THEN loc.location_id END) AS sched_engaged,
+    COUNT(DISTINCT CASE WHEN co.messaging_engaged_boolean = 1 THEN loc.location_id END) AS msg_engaged
 FROM bizops.product_location_engagement_metrics loc
 JOIN public.locations l ON l.location_id = loc.location_id
 LEFT JOIN bizops.product_company_engagement_metrics co
@@ -213,7 +220,7 @@ GROUP BY loc.date;
 ```sql
 SELECT
     loc.date,
-    COUNT(DISTINCT CASE WHEN loc.engagement_boolean THEN l.company_id END) AS engaged_companies
+    COUNT(DISTINCT CASE WHEN loc.engagement_boolean = 1 THEN l.company_id END) AS engaged_companies
 FROM bizops.product_location_engagement_metrics loc
 JOIN public.locations l ON l.location_id = loc.location_id
 WHERE loc.date = '2024-01-15'
