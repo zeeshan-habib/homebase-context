@@ -6,13 +6,13 @@ Analytics & Product Glossary
 | Metric / Term | Definition | Data Location |
 | :---- | :---- | :---- |
 | **📋  WBR / MBR Definitions** |  |  |
-| **WBR** | Weekly Business Review. A recurring meeting and shared Google Slides deck where key company metrics are reviewed every week. Tracks ARR, enrollment, non-repayment rates, pacing vs. PoR, and more across all product lines. |  |
+| **WBR** | Weekly Business Review. A recurring meeting and shared Google Slides deck where key company metrics are reviewed every week. Tracks ARR, enrollment, non-repayment rates, pacing vs. PoR, and more across all product lines. | |
 | **MBR** | Monthly Business Review. The monthly equivalent of the WBR. Includes OKR progress and is presented to the exec team. |  |
 | **PoR** | Plan of Record. The official annual plan set at the start of the year (e.g., set in Jan '26). The primary variance benchmark throughout the WBR. |  |
 | **PW Fcst** | Prior Week Forecast. The ARR forecast from the previous week's WBR, used to measure week-over-week forecast changes. |  |
 | **T4 Wk** | Trailing 4-Week Average. The average of the past 4 weeks, excluding the current week. Used to smooth out weekly noise in metrics. |  |
 | **DX (e.g. D30, D60)** | Metric on day X of that company's life — exactly 30 days after they sign up. Used for cohort analysis on monetization, activation, and loss rates. |  |
-| **Unique Paying Companies** | Unique Team App, Payroll, and Hiring-paying companies. A single company paying for multiple products is counted only once. Primary top-line customer count metric. |  |
+| **Unique Paying Companies** | Unique Team App, Payroll, and Hiring-paying companies. A single company paying for multiple products is counted only once. Primary top-line customer count metric. |dbt.fin_product_monthly_revenue or paying in public.fact_companies_by_day |
 | **New Paying Companies** | First-time paying locations. Excludes reactivations. |  |
 | **NRR excl. XS** | Net Revenue Retention, excluding expansion. Total revenue received today from companies that were paying 1 year ago for Team App, vs. the total revenue received 1 year ago from the same cohort. |  |
 | **Avg. ASP / Paying Company** | Gross Annualized ARR divided by the number of unique paying companies. |  |
@@ -24,7 +24,7 @@ Analytics & Product Glossary
 | **DRI** | Directly Responsible Individual. Each WBR slide has a named DRI for the metric and a separate Analytics DRI. |  |
 | **💰  Revenue & Finance Metrics** |  |  |
 | **ARR** | Annualized Run Rate. MRR × 12\. Primary top-line revenue metric. For Cash Out, derived from instant advance fees ($4.99 each). |  |
-| **MRR** | Monthly Recurring Revenue. Total subscription and recurring revenue in a given month. Broken out by product (Team App, Payroll, Cash Out, Hiring, Clover Embedded, etc.). |  |
+| **MRR** | Monthly Recurring Revenue. Total subscription and recurring revenue in a given month. Broken out by product (Team App, Payroll, Cash Out, Hiring, Clover Embedded, etc.). | Can be found in price column in public.fact_locations_by_day or at the company level in dbt.fin_product_monthly_revenue|
 | **Gross Annualized Revenue** | Total ARR across all products. The headline top-line metric in the WBR Summary slide. |  |
 | **ARR Growth (YoY %)** | Year-over-year percentage growth in Gross Annualized Revenue. |  |
 | **New Location MRR $** | MRR added from brand-new paying locations in a given period. |  |
@@ -41,7 +41,7 @@ Analytics & Product Glossary
 | **1D1** | 1-Day 1-Action Activation. A user or location that completes at least one meaningful product action within the first 24 hours after sign-up. Core marketing acquisition metric uploaded to Google and Bing for conversion tracking. pLTV score is incorporated after day 8\. | signup\_1d1 \= ‘true’ in public.companies table  |
 | **Signups** | New accounts or locations that registered on Homebase in a given period. The top of the acquisition funnel. Tracked weekly in the WBR alongside 1D1s. | public.companies |
 | **1D1s % of Signups** | The percentage of signups that achieve a 1D1 activation. Typically around 19–20%. |  |
-| **2D7** | Activity within the first 2 and 7 days after sign-up. Used in ad platform uploads (Google/Bing) alongside 1D1 for cohort quality tracking. |  |
+| **2D7** | Activity within the first 2 and 7 days after sign-up. Used in ad platform uploads (Google/Bing) alongside 1D1 for cohort quality tracking. | signup_2d7 column in public.companies |
 | **24H / 7D** | Renamed Looker fields for first-24-hour and first-7-day activity, previously named \_24 and \_7. |  |
 | **Wk1 2D7 Rate** | Percentage of signups from a given week that engage meaningfully within 7 days. An early signal of monetization potential tracked in the Team App funnel. |  |
 | **D17 Engaged Rate** | Percentage of signups that are engaged (actively using the product) by day 17\. |  |
@@ -73,11 +73,11 @@ Analytics & Product Glossary
 | **Cash Out (CO)** | Homebase's Earned Wage Access (EWA) product. Employees connect their bank account via Plaid and can take advances on earned wages during the pay period. Free advances take 1–3 business days; instant advances cost $4.99. |  |
 | **EWA** | Earned Wage Access. The industry term for products like Cash Out, where employees access earned wages before payday. |  |
 | **COs (count)** | The total number of Cash Out advances taken in a given period. |  |
-| **CO ARR** | Annualized revenue from Cash Out instant advance fees. Primary revenue metric for the financial services team. |  |
+| **CO ARR** | Annualized revenue from Cash Out instant advance fees. Primary revenue metric for the financial services team. | fee_in_dollars column in public.cashout_advances |
 | **Instant Advance Rate %** | Percentage of CO advances taken as instant (paid) vs. free standard delivery. Typically \~95–97%. |  |
 | **Avg. CO / User** | Average number of Cash Out advances per active user in a given period. A measure of engagement and repeat usage. |  |
-| **Total CO Users** | Total active Cash Out users who have taken at least one advance in the measurement period. |  |
-| **New Enrollments** | New users who successfully completed CO enrollment (connected bank via Plaid, passed eligibility and risk checks). |  |
+| **Total CO Users** | Total active Cash Out users who have taken at least one advance in the measurement period. | user_id in public.cashout_advances |
+| **New Enrollments** | New users who successfully completed CO enrollment (connected bank via Plaid, passed eligibility and risk checks). | users count from postgres.shift_pay_eligibilities where triggered_by = 'enrollment' |
 | **New First Time Users** | Enrolled users who took their very first Cash Out advance in a given period. |  |
 | **% First Time Activation** | New First Time Users as a percentage of New Enrollments. Measures how quickly newly enrolled users take their first advance. |  |
 | **Eligible EEs (Mobile \+ Shift Active)** | The pool of employees currently eligible to enroll in CO: they use the mobile app and have recent shift activity. |  |
@@ -172,9 +172,9 @@ Analytics & Product Glossary
 | **AI Assistant** | Homebase's AI-powered features suite: Predictive Scheduling, Shift Reassignment, Assisted Clock In/Out, Manager Log Assistance, Call Out Agent. Tracked via WAU (Weekly Active Locations). |  |
 | **Sierra** | Homebase's AI support agent. Tracked via containment rate and tickets per engaged location. |  |
 | **Clover Embedded** | Homebase timesheets embedded directly in the Clover POS. See Clover Embedded section above. |  |
-| **Basic** | Homebase Freemium tier – includes basic scheduling and time tracking  |  |
-| **Essentials**  | Homebase cheapest paying tier – includes advanced scheduling, advanced time tracking, team communication. Costs $30 per month     |  |
-| **Plus**  | Homebase tier that costs $70 per month, includes everything in essentials \+ scheduling assistant, PTO, departments & permissions |  |
-| **AiO**  | Homebase tier that costs $120 per month, includes everything in plus as well as employee onboarding, labor cost management, HR & compliance  |  |
+| **Basic** | Homebase Freemium tier – includes basic scheduling and time tracking  | tier_id = 1 in public.fact_locations_by_day|
+| **Essentials**  | Homebase cheapest paying tier – includes advanced scheduling, advanced time tracking, team communication. Costs $30 per month     | tier_id = 2 in public.fact_locations_by_day |
+| **Plus**  | Homebase tier that costs $70 per month, includes everything in essentials \+ scheduling assistant, PTO, departments & permissions | tier_id = 3 in public.fact_locations_by_day |
+| **AiO**  | Homebase tier that costs $120 per month, includes everything in plus as well as employee onboarding, labor cost management, HR & compliance  | tier_id = 4 in public.fact_locations_by_day |
 
 *Homebase Internal — Confidential  •  Last updated February 2026*
