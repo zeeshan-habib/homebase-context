@@ -1,16 +1,6 @@
 # Query Library
 
-Reusable SQL queries organized by category. Load relevant files when building similar queries.
-
-## Categories
-
-| Folder | Use for |
-|---|---|
-| `engagement/` | Feature engagement, product usage, activation |
-| `revenue/` | MRR, churn, billing, tier distribution |
-| `locations/` | Location-level metrics, status, tiers |
-| `hr/` | PTO, departments, headcount |
-| `operations/` | Internal tooling, operational metrics |
+Reusable SQL queries. Load relevant files when building similar queries.
 
 ## File Format
 

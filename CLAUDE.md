@@ -21,7 +21,7 @@ IF user says "save this query" or "add this to the query library":
 1. Extract the final SQL from the conversation
 2. Derive: title, description, category, tags, notes/caveats — summarize from conversation context; ask for author name if not known
 3. Create a branch: `query/<title-slug>`
-4. Write file to `04-queries/<category>/<title-slug>.sql` using the frontmatter format in `04-queries/README.md`
+4. Write file to `04-queries/<title-slug>.sql` using the frontmatter format in `04-queries/README.md`
 5. Open a draft PR on `pioneerworks/homebase-context` with:
    - Title: `[Query] <title>`
    - Body: what the user was trying to answer, why this query was needed, key assumptions or caveats from the conversation
