@@ -158,7 +158,7 @@ Production data flows from operational databases (postgres) to analytics staging
 
 #### 1. `business_users.hiring.aggregate_hiring_profile` (ICP Profile)
 **Notebook**: `CREATE aggregate_hiring_profile (ICP Profile)`
-**Description**: Master profile per company combining hiring stats, Homebase engagement, ML predictions, and ICP definitions
+**Description**: Master profile per company combining hiring stats, Homebase engagement, ML predictions, ICP definitions, and target segment classification
 
 **Key Fields**:
 - Company info: `company_id`, `company_name`, `company_uuid`, `owner_first_name`, `owner_last_name`, `email`, `phone`
@@ -168,13 +168,18 @@ Production data flows from operational databases (postgres) to analytics staging
 - ML predictions: `pattern_type`, `predicted_role`, `total_hires_this_role`, `months_since_last_hired`, `predicted_role_2`, `predicted_role_3`
 - Hiring Assistant usage: `first_draft_created_at`, `first_zsp_view`
 - External data: `google_place_id`
+- V1 flag: `has_v1_location` (true if company has any location that was in the V1 experiment)
 
 **ICP Logic**:
 - `icp_hiring_facts`: `months_with_hires_L12 >= 6` AND `ee_add_per_location_per_month_L12M BETWEEN 2 AND 7` AND `location_count < 6`
 - `icp_homebase_facts`: (Plus+ OR Payroll) AND (Time Tracking OR Scheduling engaged) AND OAM engaged
 - `is_icp`: Both hiring facts AND Homebase facts = TRUE
 
-**Sources**: Joins `hb_company_profile`, `hiring_assistant_usage`, `ml_hiring_intelligence`, `company_last_12_months_hiring_stats`, companies, users, google places
+**Target Segment Logic** (H1 2026):
+- `is_target_segment`: `employee_count > 25` AND `business_type IN ('Food, Drink, & Dining', 'Hospitality')` AND `engaged = 1` AND `ee_added_per_month_L12M > 1.5` AND `months_with_hires_L12 > 5` AND `location_count < 6` AND `oam_activity = 1`
+- This is specifically tuned for H1 2026 sales activities targeting high-frequency F&B and Hospitality hirers
+
+**Sources**: Joins `hb_company_profile`, `hiring_assistant_usage`, `ml_hiring_intelligence`, `company_last_12_months_hiring_stats`, companies, users, google places, V1 experiment flags
 
 #### 2. `business_users.hiring.job_post_history_by_day` (Historical Status by Day)
 **Notebook**: `CREATE job_post_history_by_day (Historical status by day)`
@@ -305,6 +310,58 @@ WHERE jobs_posted > 0
 
 **Data Sources**: `postgres.hiring_job_requests`, `postgres.hiring_job_applications`, `playground.mm_hiring_product`
 
+#### 9. `business_users.hiring.company_hiring_milestones` (Value Milestones)
+**Notebook**: `CREATE company_hiring_milestones (Hiring User Milestones)`
+**Description**: One row per company. Captures the timestamp when each value milestone was first reached in Hiring Assistant (V2). Used for funnel analysis and lifecycle stage tracking.
+
+**Milestones (in order)**:
+1. `first_zsp_visit_at` — Visited Zero State Page (from `hiring_assistant_usage`)
+2. `first_draft_at` — Started a job draft (first `created_at` in `hiring_job_requests` V2)
+3. `first_job_posted_at` — Posted first job; also triggers trial start (first non-draft with `activated_at` or `posted_at`)
+4. `first_application_at` — Received first application
+5. `tenth_application_at` — Received 10th application
+6. `first_top_match_at` — Received first top match (from `playground.mm_hiring_product` where `is_top_match = TRUE`)
+7. `first_healthy_job_at` — First day a job crossed 20+ applications AND 5+ top matches (from `job_post_history_by_day`)
+8. `first_interview_at` — First interview scheduled (from `playground.hiring_interviews`)
+9. `first_subscription_created_at` — First ever subscription created (not necessarily a trial conversion; some companies subscribe directly)
+
+**Filters**:
+- Only includes companies with at least one of: `first_draft_at`, `first_job_posted_at`, or `first_zsp_visit_at` (i.e. any V2 engagement)
+- All milestones use `hiring_version = 2`
+
+**Data Sources**: `postgres.hiring_job_requests`, `postgres.hiring_job_applications`, `playground.mm_hiring_product`, `playground.hiring_interviews`, `business_users.hiring.hiring_assistant_usage`, `business_users.hiring.job_post_history_by_day`, `postgres.biller_product_subscriptions`, `public.companies`, `public.locations`
+
+#### 10. `business_users.hiring.hiring_subscriptions` (Subscription Status)
+**Notebook**: `CREATE hiring_subscriptions`
+**Description**: One row per location, showing the most recent subscription and its current status. Includes both active and churned subscriptions in a single table distinguished by `subscription_status`.
+
+**Key Fields**:
+- Identifiers: `location_id`, `location_name`, `subscription_id`, `company_id`, `company_name`, `company_uuid`
+- Company metrics: `employee_count`, `location_count`
+- Pricing: `promo_code`, `stripe_mrr`, `stripe_tier` (Unlimited / Starter / Unlimited Annual)
+- Dates: `hiring_subscription_created_at`, `subscription_archived_at`
+- Status: `subscription_status` (active if `archived_at IS NULL`, else churned)
+
+**Deduplication**: Uses `ROW_NUMBER() OVER (PARTITION BY l.location_id ORDER BY bps.created_at DESC) = 1` — keeps the **most recent subscription per location**. Locations that churned and re-subscribed will only show their latest record.
+
+**Pricing / MRR Logic**:
+```sql
+CASE
+  WHEN partner_code_id = 'TRY'                                  THEN 0
+  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC1'  THEN 149
+  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC2'  THEN 100
+  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC3'  THEN 75
+  WHEN bps.product_id = 925 AND partner_code_id IS NULL         THEN 199
+  WHEN bps.product_id = 1058                                    THEN 30
+  WHEN bps.product_id = 1057                                    THEN 99
+  ELSE 199
+END AS stripe_mrr
+```
+
+**Discount ID Filter**: `ad.discount_id IN (7535, 7663, 7664, 7665)`
+
+**Data Sources**: `postgres.biller_product_subscriptions`, `public.locations`, `public.companies`, `postgres.applied_discounts`, `postgres.discounts`
+
 ### Pipeline Dependencies
 
 **Dependency Chain**:
@@ -315,12 +372,16 @@ WHERE jobs_posted > 0
    - `job_post_history_by_day` - Daily job metrics
    - `job_post_level_details` - Simple job aggregations
    - `jobs_with_metadata` - Job-level details
+   - `hiring_subscriptions` - Subscription status per location (most recent sub)
 
 2. **ML-dependent** (requires company_last_12_months_hiring_stats):
    - `ml_hiring_intelligence` - Pattern classification and predictions
 
-3. **Master aggregation** (requires all above):
-   - `aggregate_hiring_profile` - Combines all profiles with ICP logic
+3. **Milestone-dependent** (requires hiring_assistant_usage, job_post_history_by_day):
+   - `company_hiring_milestones` - Value milestone timestamps per company
+
+4. **Master aggregation** (requires all above):
+   - `aggregate_hiring_profile` - Combines all profiles with ICP logic + `is_target_segment`
 
 ## Looker/BI Setup
 
@@ -765,24 +826,24 @@ LEFT JOIN postgres.hiring_settings hs
 - **Product ID 925**: Unlimited Monthly (variable based on promo code)
 
 ### Discount/Promo Code Pricing (Product 925)
+- **'TRY'**: $0/month (trial)
 - **'MULTILOC1'**: $149/month
 - **'MULTILOC2'**: $100/month
 - **'MULTILOC3'**: $75/month
 - **No promo code**: $199/month (default)
-- **'TRY'**: $0/month (trial)
 
 ### MRR Calculation Logic
 ```sql
 CASE
-  WHEN partner_code_id = 'TRY' THEN 0
-  WHEN bps.product_id = 1058 THEN 30
-  WHEN bps.product_id = 1057 THEN 99
-  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC1' THEN 149
-  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC2' THEN 100
-  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC3' THEN 75
-  WHEN bps.product_id = 925 AND partner_code_id IS NULL THEN 199
+  WHEN partner_code_id = 'TRY'                                  THEN 0
+  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC1'  THEN 149
+  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC2'  THEN 100
+  WHEN bps.product_id = 925 AND partner_code_id = 'MULTILOC3'  THEN 75
+  WHEN bps.product_id = 925 AND partner_code_id IS NULL         THEN 199
+  WHEN bps.product_id = 1058                                    THEN 30
+  WHEN bps.product_id = 1057                                    THEN 99
   ELSE 199
-END AS Stripe_MRR
+END AS stripe_mrr
 ```
 
 ### ARR Calculation
