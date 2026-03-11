@@ -18,7 +18,7 @@ Load the relevant files for your task:
 | `03-data/date-conventions.md` | Any query with date filtering, grouping by period, period-over-period comparisons, or cohort day windows (D1, D14, D30, etc.) |
 | `03-data/product-domains/timetracking.md` | Timecards, clock-in/out, breaks, manager edits, ACO/ACI |
 | `03-data/product-domains/scheduling.md` | Shifts, schedules, open shifts, publishing, shift edits, shift trades |
-| `04-queries/<category>/` | Load matching query files when building a similar query |
+| `04-queries/` | Any SQL question — scan description and tags frontmatter for relevant joins, filters, or patterns to reference |
 
 ## Contributing
 

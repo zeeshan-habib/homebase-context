@@ -13,7 +13,14 @@ See README.md for the full file index and "when to load" guidance.
 - `02-business/` — Business overview and product timeline. Load when domain context is needed.
 - `03-data/` — Metric definitions, schema references, and SQL patterns. Load based on the specific data domain.
 - `03-data/product-domains/` — Product-area-specific schemas and logic (timetracking, payroll, etc.).
-- `04-queries/` — Curated SQL queries organized by category. Load relevant files when building a similar query.
+- `04-queries/` — Curated SQL queries organized by category. Always scan when answering a SQL question.
+
+## Using the Query Library
+
+For any SQL question:
+1. Scan `04-queries/` — read the `-- description:` and `-- tags:` frontmatter of each file
+2. IF any file is relevant to the question (same tables, filters, joins, or business concept) → reference it as context when writing the new query. Use it to inform table choices, filter logic, join patterns, or metric definitions — not to copy it verbatim.
+3. IF no match → write the query from scratch using the context files
 
 ## Saving Queries to the Library
 
