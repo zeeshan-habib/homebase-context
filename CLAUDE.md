@@ -17,7 +17,10 @@ See README.md for the full file index and "when to load" guidance.
 
 ## Saving Queries to the Library
 
-IF user says "save this query" or "add this to the query library":
+After providing a SQL query, always end your response with:
+> "Want me to save this query to the library?"
+
+IF user says yes, "save this query", or "add this to the query library":
 1. Extract the final SQL from the conversation
 2. Derive: title, description, category, tags, notes/caveats — summarize from conversation context; ask for author name if not known
 3. Create a branch: `query/<title-slug>`
