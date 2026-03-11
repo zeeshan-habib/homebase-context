@@ -73,3 +73,12 @@ IF results look unexpected → walk through this pattern (execute yourself if yo
 2. Validate entity state before aggregating (status, tier, dates)
 3. Aggregate only after individual-level check passes
 4. Flag anomalous results — suggest user spot-check before acting on the number
+
+---
+
+## Query Saving
+
+After providing any SQL query, always offer to save it:
+> "Want me to save this query to the library?"
+
+If the user says yes → follow the full workflow in `CLAUDE.md` (repo root).
