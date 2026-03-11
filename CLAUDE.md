@@ -18,8 +18,8 @@ See README.md for the full file index and "when to load" guidance.
 ## Using the Query Library
 
 For any SQL question:
-1. Scan `04-queries/` — read the `-- description:` and `-- tags:` frontmatter of each file
-2. IF any file is relevant to the question (same tables, filters, joins, or business concept) → reference it as context when writing the new query. Use it to inform table choices, filter logic, join patterns, or metric definitions — not to copy it verbatim.
+1. Read `04-queries/INDEX.md` — match the question against the description and tags columns
+2. IF any row is relevant (same tables, filters, joins, or business concept) → load that `.sql` file and use it as reference context when writing the new query. Use it to inform table choices, filter logic, join patterns, or metric definitions — not to copy it verbatim.
 3. IF no match → write the query from scratch using the context files
 
 ## Saving Queries to the Library
@@ -32,10 +32,11 @@ IF user says yes, "save this query", or "add this to the query library":
 2. Derive: title, description, category, tags, notes/caveats — summarize from conversation context; ask for author name if not known
 3. Create a branch: `query/<title-slug>`
 4. Write file to `04-queries/<title-slug>.sql` using the frontmatter format in `04-queries/README.md`
-5. Open a draft PR on `pioneerworks/homebase-context` with:
+5. Add a new row to `04-queries/INDEX.md` with the file name, title, description, and tags
+6. Open a draft PR on `pioneerworks/homebase-context` with:
    - Title: `[Query] <title>`
    - Body: what the user was trying to answer, why this query was needed, key assumptions or caveats from the conversation
-6. Reply with the PR link
+7. Reply with the PR URL so the user can find it
 
 ## Rules
 
