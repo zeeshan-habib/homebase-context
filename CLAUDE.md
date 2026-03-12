@@ -42,3 +42,4 @@ IF user says yes, "save this query", or "add this to the query library":
 
 - If a question involves a metric, table, or term not covered in these files, say so — do not guess.
 - See context-file-style-guide.md for authoring guidelines when adding new files.
+- Ignore `05-sammy-test-product-context/` - this is a test folder and should not be loaded or referenced.
