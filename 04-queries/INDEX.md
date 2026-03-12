@@ -1,7 +1,5 @@
 # Query Library Index
-
 Read this file first when answering a SQL question. Identify relevant files by matching the description and tags to the question, then load only those files for full SQL context.
-
 | File | Title | Description | Tags |
 |------|-------|-------------|------|
 | `accrual_balances.sql` | Cashout User Accrual Balances with Work Activity | Retrieves accrual balances for cashout users with aggregated hours worked and accrual events per pay period. Can be used to identify actively working users. | cashout, accrual, earnings, pay-period, shift-pay |
@@ -18,3 +16,6 @@ Read this file first when answering a SQL question. Identify relevant files by m
 | `research_user_list.sql` | Owner Research List with Cashout Context | Pulls owner emails, names, and location metadata for user research interviews. Filter on business_type_new, tier_id, channel, or cashout_enabled to target specific segments. | research, owners, locations, cashout, interviews |
 | `return_codes_by_bank.sql` | Payback Return Codes by Bank and Month | Monthly count of failed cashout payback attempts grouped by bank bucket, return code, and active/inactive bank status. Used to monitor NACHA return thresholds. | cashout, paybacks, returns, nacha, bank-bucket, risk |
 | `user_states_by_day.sql` | Cashout User States by Day | Daily snapshot of cashout user state (eligibility, bank, user_state) for all enrolled users over the trailing 180 days. Used to measure eligibility and activation rates. | cashout, user-state, eligibility, activation, daily, bank |
+
+| `active-payroll-ach-companies.sql` | Active Payroll Companies on ACH Payment Method | Pulls active payroll companies (payroll_state = 7) whose current Stripe subscription payment method is ACH (us_bank_account). One row per company with owner contact info. | payroll, ach, stripe, billing, payment-method, companies, owners |
+
