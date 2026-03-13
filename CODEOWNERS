@@ -1,5 +1,11 @@
-# Auto-request review from kmcdonough on all query submissions
-04-queries/ @KPMcDonough49
+# Default - catch everything
+* @v-tori @KPMcDonough49 @swonghb
+
+# Folder-specific owners
+01-instructions/ @v-tori @KPMcDonough49 @swonghb
+02-business/ @v-tori @KPMcDonough49 @swonghb
+03-data/ @v-tori @KPMcDonough49 @swonghb
+04-queries/ @v-tori @KPMcDonough49 @swonghb
 
 # Sammy's test product context - sole owner
 05-sammy-test-product-context/ @sammyhalabi
