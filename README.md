@@ -40,7 +40,7 @@ Each folder has a `CLAUDE.md` that serves as the file index for AI tools - this 
 4. Add a row to the `CLAUDE.md` in the relevant subfolder with a "when to load" description
 5. Open a PR for review
 
-### Adding a query to `04-queries/`
+### Adding a query to 04-queries
 
 Say **"save this query"** in your Claude conversation. Claude will create a branch, write the file, and open a draft PR automatically.
 
