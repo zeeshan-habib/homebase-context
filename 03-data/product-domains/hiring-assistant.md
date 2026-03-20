@@ -964,21 +964,56 @@ COUNT(DISTINCT CASE WHEN days_after_expiry >= 60                            THEN
 ```
 
 **Channel assignment (Sales vs PLG):**
+
+Rules:
+- **Sales** = the **first** subscription at a location after a Closed Won SF opportunity with `hiring_connected_rep__c IS NOT NULL`
+- **Opp window**: the opp's `closed_won_date_all` must be ≤ `sub created_at + 3 days` (3-day buffer for SF data lag)
+- **Resets per opp**: `PARTITION BY (location_id, most_recent_sales_opp_date)` — each new Closed Won opp resets the clock, giving that location one more Sales-attributed subscription
+- **Churn + PLG re-subscribe**: if a company churns and resubscribes without a new opp, `rank_after_opp > 1` → attributed as PLG
+
 ```sql
--- Sales = Closed Won Salesforce opportunity with a connected rep
--- PLG   = everything else
-CASE
-  WHEN MAX(CASE
-        WHEN so.uuid IS NOT NULL
-          AND so.current_stage = 'Closed Won'
-          AND co.hiring_connected_rep__c IS NOT NULL
-        THEN 1 ELSE 0
-      END) = 1 THEN 'Sales'
-  ELSE 'PLG'
-END AS channel
--- Join: bizops.salesforce_opportunities + redshift_replica.bizops.crm_opportunity
--- Filter recordtypeid IN ('012Po00000Bz9HlIAJ', '012Po00000FXm4lIAD')
+-- Step 1: find the most recent qualifying Sales opp per subscription
+sub_with_prev_opp AS (
+  SELECT
+    sb.*,
+    MAX(CASE
+      WHEN so.current_stage = 'Closed Won'
+        AND co.hiring_connected_rep__c IS NOT NULL
+        AND so.closed_won_date_all::date <= DATEADD(DAY, 3, sb.hiring_subscription_created_at)
+      THEN so.closed_won_date_all::date
+    END) AS most_recent_sales_opp_date
+  FROM subscription_base sb
+  LEFT JOIN bizops.salesforce_opportunities so
+    ON so.uuid = sb.company_uuid
+    AND so.recordtypeid = '012Po00000FXm4lIAD'
+  LEFT JOIN redshift_replica.bizops.crm_opportunity co ON co.id = so.id
+  GROUP BY sb.subscription_id, sb.location_id, sb.company_uuid,
+           sb.hiring_subscription_created_at, sb.product_id, sb.partner_code_id
+),
+-- Step 2: rank subs per (location, opp) — only rank=1 is Sales-attributed
+sub_ranked AS (
+  SELECT *,
+    ROW_NUMBER() OVER (
+      PARTITION BY location_id, most_recent_sales_opp_date
+      ORDER BY hiring_subscription_created_at ASC
+    ) AS rank_after_opp
+  FROM sub_with_prev_opp
+),
+-- Step 3: assign channel
+subscription_data AS (
+  SELECT *,
+    CASE
+      WHEN most_recent_sales_opp_date IS NOT NULL AND rank_after_opp = 1 THEN 'Sales'
+      ELSE 'PLG'
+    END AS channel
+  FROM sub_ranked
+)
 ```
+
+Notes:
+- `subscription_base` uses `SELECT DISTINCT` + `LEFT JOIN applied_discounts` to avoid row fan-out from multiple discount records per subscription
+- `bizops.salesforce_opportunities` record type filter: `recordtypeid = '012Po00000FXm4lIAD'` (Hiring only)
+- Databricks: `DATEADD` units must be unquoted — `DATEADD(DAY, 3, ...)` not `DATEADD('day', 3, ...)`
 
 **Discount/promo dedup pattern** (avoids row fan-out from multiple discount records):
 ```sql
