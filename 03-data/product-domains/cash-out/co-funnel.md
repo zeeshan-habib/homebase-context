@@ -102,6 +102,15 @@ AND chain — all must pass:
 - DOB and address still required (legal/regulatory)
 - [EE-2756](https://joinhomebase.atlassian.net/browse/EE-2756) — KYC simplification | [EE-2823](https://joinhomebase.atlassian.net/browse/EE-2823) — Relax email/phone guards
 
+### KYC Run Triggers
+
+| Trigger | When | Frequency |
+|---------|------|-----------|
+| Enrollment | CO signup flow | Once per enrollment |
+| KYC re-verification | Profile attribute update (email, phone, DOB, address, etc.) | Every update to KYC-relevant fields |
+
+**Fix deployed (Mar 2026):** Abdullah shipped logic to skip re-verification if the user already has a passing `risk_status` + `watchlist_screening_status` from their last run. Monitoring impact. Cost: $0.22/call ($0.137 IDV + $0.083 Anti-Fraud).
+
 ### Watchlist Monitoring
 
 Plaid monitors watchlist screening continuously without re-running identity verification. Safe to stop re-verifying on profile updates.

@@ -128,30 +128,53 @@ Total eligible: ~45,969. Sampled: ~8,491 across ~3,738 locations.
 
 Debit pulls only (not ACH). 5 and 10 min offsets avoid other busy queue times at :15 and :30.
 
-### Results (as of Feb 17, 2026)
+### Results (as of Mar 11, 2026 — ~7 weeks post-launch)
 
 **Debit Returns:**
 
-| Group | Paybacks | Returns | Return Rate | NSF Rate |
-|-------|----------|---------|-------------|----------|
-| Control | 114,115 | 68,558 | 60.1% | 14.5% |
-| +5 min | 6,606 | 4,062 | 61.5% | 14.0% |
-| +10 min | 6,153 | 3,645 | 59.2% | 14.8% |
+| Group | Paybacks | Return Rate | NSF Rate |
+|-------|----------|-------------|----------|
+| Control | 226,119 | 57.0% | 13.1% |
+| +5 min | 13,467 | 59.3% | 13.3% |
+| +10 min | 12,665 | 57.0% | 12.0% |
 
-**Non-Repayment Rates:**
+**Non-Repayment Rates (dollar-weighted):**
 
 | Group | Advances | D1 | D7 | D14 |
 |-------|----------|-----|-----|-----|
-| Control | 151,495 | 18.11% | 8.05% | 4.81% |
-| +5 min | 8,600 | 18.71% | 8.82% | 2.51% |
-| +10 min | 8,301 | 19.24% | 9.01% | 6.27% |
+| Control | 290,222 | 17.11% | 7.51% | 4.20% |
+| +5 min | 16,496 | 16.79% | 7.71% | 3.82% |
+| +10 min | 15,719 | 18.35% | 7.72% | 4.42% |
 
-### Key Observations
-- Results **not statistically significant** at 90/5/5 split (~6K per variant vs 114K control)
-- Jon's framing: separate infra question from repayment question — if clock-in latency improves, that may justify the change even with neutral repayment
-- Open: Arvin to share Sidekiq queue depth / clock-in response time data
+### Statistical Significance (chi-square, p < 0.05)
 
-**Status (2026-03-11):** Awaiting re-run with ~7 additional weeks of data. Jon requested fresh numbers 3/9 for ship/kill decision.
+**Variant 1 (+5min) vs Control:**
+
+| Metric | Δ (pp) | p-value | Sig? | Direction |
+|--------|--------|---------|------|-----------|
+| Debit Return Rate | +2.27 | <0.001 | **YES** | Worse — more failed pulls |
+| NSF Rate | +0.18 | 0.556 | No | Neutral |
+| D1 Non-Repay | +0.20 | 0.549 | No | Neutral |
+| D7 Non-Repay | -0.09 | 0.818 | No | Neutral |
+| D14 Non-Repay | +0.78 | 0.053 | No | Borderline |
+
+**Variant 2 (+10min) vs Control:**
+
+| Metric | Δ (pp) | p-value | Sig? | Direction |
+|--------|--------|---------|------|-----------|
+| Debit Return Rate | -0.07 | 0.880 | No | Identical to control |
+| NSF Rate | -1.17 | <0.001 | **YES** | Better — fewer NSF failures |
+| D1 Non-Repay | +1.21 | <0.001 | **YES** | Worse — slower early repayment |
+| D7 Non-Repay | +0.05 | 0.903 | No | Converges by D7 |
+| D14 Non-Repay | +1.31 | 0.001 | **YES** | Worse — +1.3pp at D14 |
+
+### Key Takeaways
+- **Variant 1 (+5min) is a no** — significantly increases failed debit pulls with no upside
+- **Variant 2 (+10min) is the stronger option** — fewer NSF failures and the higher non-repayment mostly catches up by D7, suggesting users are just repaying a bit later, not skipping repayment. But D14 non-repayment is still significantly elevated (+1.3pp).
+- **Ship decision depends on infra benefit.** Jon's framing: separate the infra question (Sidekiq queue relief, clock-in latency) from repayment. If infra improvement is meaningful, Variant 2 tradeoff is justified.
+- **Open:** Arvin to share Sidekiq queue depth / clock-in response time data to quantify infra benefit
+
+**Status (2026-03-12):** Analysis re-run complete. Awaiting infra metrics from Arvin and ship/kill decision from Jon.
 
 **People:** Jon Blackwell (PM), Kevin McDonough (analytics), Abdullah Al-Omaisi, Arvin Sabares, Craig Wedseltoft, Jenakan Sivagnaanam (eng), Janice Lee (analytics)
 **Links:** [Analysis](https://docs.google.com/spreadsheets/d/1bezfQnIFtewVFXl9XMUg0dhAAdp8F0Oy_3jzPyNzGYg/edit?gid=7784844#gid=7784844) | [EE-2395](https://joinhomebase.atlassian.net/browse/EE-2395) | [PR #65154](https://github.com/pioneerworks/Homebase1/pull/65154)
