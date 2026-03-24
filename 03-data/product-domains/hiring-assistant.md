@@ -22,7 +22,7 @@ The Hiring Assistant data model spans multiple schemas:
 - **`playground`**: Staging/analytics tables (hiring_job_requests, hiring_job_applications, mm_hiring_product)
 - **`public`**: Shared dimension tables (locations, companies, users)
 - **`ext_firehose`**: Event data (team_change_events, experiment_tracking_events)
-- **`ext_homebase1.homebase1_public`**: External/legacy data (hiring_company_free_trials)
+- **`hive_metastore.ext_homebase1_public`**: External/legacy data (hiring_company_free_trials)
 - **`business_users.hiring`**: Analytics-ready tables (job_post_history_by_day)
 
 ### Key Tables & Views
@@ -106,7 +106,7 @@ The Hiring Assistant data model spans multiple schemas:
   - `profile_after`: JSON with employee details
   - `created_at`: Event timestamp
 
-**`hiring_company_free_trials`** (ext_homebase1.homebase1_public)
+**`hiring_company_free_trials`** (hive_metastore.ext_homebase1_public.hiring_company_free_trials in Databricks)
 - Trial start and expiration tracking
 - Key fields:
   - `company_uuid`: Company identifier
@@ -798,7 +798,7 @@ FROM biller_product_subscriptions bps
 ```sql
 FROM public.companies c
   LEFT JOIN public.locations l ON l.company_id = c.company_id
-  LEFT JOIN ext_homebase1.homebase1_public_hiring_company_free_trials hcft
+  LEFT JOIN hive_metastore.ext_homebase1_public.hiring_company_free_trials hcft
     ON hcft.company_uuid = c.uuid
   LEFT JOIN postgres.biller_product_subscriptions bps
     ON bps.owner_id = l.location_id
@@ -941,9 +941,9 @@ The preferred cohort is companies that subscribed **after their trial expired** 
 last_trial AS (
   SELECT
     company_uuid,
-    TO_TIMESTAMP(created_at  / 1000000.0) AS trial_started_at,
-    TO_TIMESTAMP(expires_at  / 1000000.0) AS trial_expires_at
-  FROM ext_homebase1.homebase1_public_hiring_company_free_trials
+    created_at AS trial_started_at,
+    expires_at AS trial_expires_at
+  FROM hive_metastore.ext_homebase1_public.hiring_company_free_trials
   QUALIFY ROW_NUMBER() OVER (PARTITION BY company_uuid ORDER BY created_at DESC) = 1
 )
 ```
