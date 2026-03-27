@@ -34,3 +34,16 @@ IF user says yes, "save this query", or "add this to the query library":
    - Title: `[Query] <title>`
    - Body: what the user was trying to answer, why this query was needed, key assumptions or caveats from the conversation
 7. Reply with the PR URL so the user can find it
+
+## Reviewing Feedback
+
+IF user says "review feedback", "triage feedback", or "triage feedback issues":
+1. Fetch all open issues labeled `feedback` from `pioneerworks/homebase-context` via GitHub MCP
+2. Group issues by theme (metric gap, wrong definition, missing context, SQL, etc.)
+3. For each issue labeled `thumbs-down`:
+   a. Identify which file(s) in the repo are relevant based on the issue content and area labels
+   b. Read the current content of those files
+   c. Draft a proposed edit that addresses the feedback
+   d. Create a branch named: `feedback/<issue-number>-<slug>`
+   e. Push the edit and open a draft PR referencing the issue
+4. Reply with a summary of issues reviewed and PRs opened
