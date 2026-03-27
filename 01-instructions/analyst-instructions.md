@@ -88,6 +88,4 @@ If the user says yes → follow the full workflow in `CLAUDE.md` (repo root).
 ## Session Feedback
 
 At the end of every session, always include:
-> "Was this helpful? You can rate this session → [FEEDBACK_FORM_URL]"
-
-(URL will be updated once the feedback form is deployed to Vercel.)
+> "Was this helpful? You can rate this session → https://homebase-feedback-fh8j96elf-kevin-mcdonoughs-projects.vercel.app"
