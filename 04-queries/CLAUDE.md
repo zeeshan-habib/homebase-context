@@ -1,6 +1,6 @@
 # Query Library
 
-Reusable SQL queries. Load relevant files when building similar queries.
+Reusable SQL queries. Scan `INDEX.md` first to find relevant queries, then load the matching `.sql` files as reference when building similar queries.
 
 ## File Format
 
@@ -16,7 +16,3 @@ Each `.sql` file uses frontmatter comments followed by the query:
 
 SELECT ...
 ```
-
-## Adding a Query
-
-Say **"save this query"** at any point in a Claude conversation. Claude will extract the SQL, summarize the context from the conversation, and open a draft PR on this repo for review.

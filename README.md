@@ -29,22 +29,10 @@ Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self
 
 ## Contributing
 
-### Adding a skill to 01-skills
+Use the `/contribute-context` skill in Claude Code to start any contribution - it handles pulling main, creating a branch, and following the repo's conventions.
 
-See [`01-skills/README.md`](01-skills/README.md) for full instructions. Each skill lives in its own subfolder and is owned by the person who created it. Add a CODEOWNERS entry for your subfolder so you can approve changes to it.
+Each folder has a `CLAUDE.md` that serves as the file index for AI tools - if you add a new file, update the relevant `CLAUDE.md` to include it. See [`context-file-style-guide.md`](context-file-style-guide.md) for authoring guidelines.
 
-### Adding or editing a context file
-
-Each folder has a `CLAUDE.md` that serves as the file index for AI tools - this is how models know which files to load for a given question.
-
-1. Create a branch from `main`
-2. Read [`context-file-style-guide.md`](context-file-style-guide.md) before writing - it covers what belongs, formatting rules, and anti-patterns
-3. Every file must start with a one-line header describing its scope and when to load it
-4. Add a row to the `CLAUDE.md` in the relevant subfolder with a "when to load" description
-5. Open a PR for review
-
-### Adding a query to 04-queries
-
-Say **"save this query"** in your Claude conversation. Claude will create a branch, write the file, and open a draft PR automatically.
+Each skill lives in its own subfolder and is owned by the person who created it. See [`01-skills/README.md`](01-skills/README.md) for details on adding skills.
 
 For project background and roadmap, see the [Structure & Plan](https://docs.google.com/document/d/1UM4C-UrP9I7CqhjR829C-B3Se_l_V-TJfcegKkcb2K0/edit) doc.

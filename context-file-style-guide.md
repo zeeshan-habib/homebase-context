@@ -114,6 +114,24 @@ IF a file exceeds its target → audit every line against: "Would the model get 
 
 ---
 
+## CLAUDE.md Convention
+
+Every folder has a `CLAUDE.md` that serves as the folder's index for AI tools. Claude reads this file first when entering a folder to decide which files to load.
+
+**Format**: Use a "File | When to load" table. Keep descriptions short and trigger-based - they should help Claude match a user's question to the right file.
+
+```
+| File | When to load |
+|---|---|
+| `glossary.md` | When metric definitions or terminology are needed |
+```
+
+**When to update**: Any time you add, rename, or remove a file from a folder, update that folder's `CLAUDE.md` to match. A file not listed in the index is invisible to Claude.
+
+**New folders**: If you create a new folder, add a `CLAUDE.md` with a one-line description of the folder's scope and a file table. Also add the folder to the root `CLAUDE.md` folder directory.
+
+---
+
 ## Structure Checklist for New Files
 
 Before adding a new context file:

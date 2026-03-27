@@ -10,6 +10,7 @@ Pick the skill in `01-skills/README.md` that matches the request.
 | Skill | When to use |
 |---|---|
 | `/analyst` | Any analytics, data, or metric question — SQL, definitions, diagnostic help |
+| `/contribute-context` | Adding or editing files in this repo — pulls main, creates a branch, gets ready for a PR |
 | `/create-amplitude-dashboard` | Building an Amplitude dashboard from a Confluence eventing spec |
 | `/amplitude-eventing` | Creating a Confluence eventing spec from a Figma mockup |
 
@@ -31,9 +32,24 @@ IF no skill matches → browse the folder directory below.
 - Ignore any folders prefixed with `05-` (test/experimental).
 - See `context-file-style-guide.md` for authoring guidelines when adding new files.
 
-## Adding a New Skill
+## Contributing
 
-IF user wants to create or contribute a new skill, read `01-skills/CLAUDE.md` for instructions on folder structure, file format, and CODEOWNERS setup.
+IF user wants to add or edit files in this repo (context files, skills, queries), use the `/contribute-context` skill to start. It handles pulling main, creating a branch, and setting up for a PR.
+
+For new skills specifically, also read `01-skills/CLAUDE.md` for folder structure, file format, and CODEOWNERS setup.
+
+## Saving Queries to the Library
+
+IF user says "save this query", "add this to the query library", or similar:
+1. Extract the final SQL from the conversation
+2. Derive: title, description, category, tags, notes/caveats - summarize from conversation context; ask for author name if not known
+3. Create a branch: `query/<title-slug>`
+4. Write file to `04-queries/<title-slug>.sql` using the frontmatter format in `04-queries/CLAUDE.md`
+5. Add a new row to `04-queries/INDEX.md` with the file name, title, description, and tags
+6. Open a draft PR on `pioneerworks/homebase-context` with:
+   - Title: `[Query] <title>`
+   - Body: what the user was trying to answer, why this query was needed, key assumptions or caveats from the conversation
+7. Reply with the PR URL so the user can find it
 
 ## Reviewing Feedback
 
