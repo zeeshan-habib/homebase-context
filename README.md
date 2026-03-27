@@ -20,11 +20,11 @@ Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self
 
 ## Repo Structure
 
-- `01-instructions/` - Behavioral rules and environment setup
 - `02-business/` - Business overview, entity relationships, product timeline
 - `03-data/` - Metric definitions, glossary, date conventions, engagement metrics
 - `03-data/product-domains/` - Product-area schemas and logic (timetracking, scheduling, etc.)
 - `04-queries/` - Curated SQL queries organized by category
+- `01-skills/` - Shared Claude Code skills (analyst, dashboard creation, etc.)
 - `context-file-style-guide.md` - Authoring guidelines for new context files
 - `CLAUDE.md` - Top-level AI-facing instructions and folder directory (each subfolder also has its own `CLAUDE.md` with file-level guidance)
 

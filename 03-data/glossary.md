@@ -4,6 +4,62 @@
 
 ---
 
+## ⚠️ "Active" — Disambiguation
+
+Default to **Engaged** when the question is general. Use the first interpretation that fits.
+
+| Priority | Term | What it means | When to use | Where it lives |
+|---|---|---|---|---|
+| **1 (default)** | **Engaged** | (TT OR scheduling engaged, 7d) AND OAM activity (30d) | Any general question about active locations, product health, customer base size, retention | `engagement_boolean = 1` in `bizops.product_location_engagement_metrics` |
+| 2 | **Paying active** | On a paid plan (tier 2+) and not in an active trial | Revenue, churn $, ARR, billing, pricing questions | `tier_id IN (2,3,4)` in `public.fact_locations_by_day` AND not in `postgres.trial_periods WHERE state = 'started'` |
+| 3 | **Feature-specific engaged** | Engaged with a specific feature (TT engaged, scheduling engaged, hiring engaged, etc.) | Questions explicitly about a single feature's adoption or usage | Feature-specific `*_engaged_boolean = 1` columns in `bizops.product_location_engagement_metrics` |
+| 4 | **Shift active** | Has a timecard or published schedule in the lookback window | Scheduling/timecard volume questions, not general health | Derived from `bizops.timecards` or `bizops.product_scheduling_usage_metrics` |
+| 5 | **Payroll active** | Has run payroll on Homebase | Payroll-specific questions | Payroll tables |
+| 6 | **CO active** | Has taken a cash out in the period | Cash Out-specific questions | Cash Out tables |
+
+### Columns to Avoid
+
+Do NOT use these as a general activity measure:
+
+| Column | Table | Why to avoid |
+|---|---|---|
+| `active_now` | `public.locations` | Includes any pageview — broader than MAU, not a standard metric |
+| `mau` | `public.locations` | Timecard OR schedule — not the same as Engaged |
+| `is_active` / `active` flags | Various | Usually means "not archived", not product usage |
+
+When in doubt → `engagement_boolean = 1` from `bizops.product_location_engagement_metrics`.
+
+---
+
+## ⚠️ "Churn" — Disambiguation
+
+No single company-wide churn definition. Resolve from context.
+
+| Type | Definition | How to measure | Reversible? |
+|---|---|---|---|
+| **Engagement churn** (most common) | Was engaged in month N but not engaged in month N+1 | `engagement_boolean = 1` on last day of month N, `engagement_boolean = 0` on last day of month N+1 | Yes — if they re-engage in a future month, they are **reactivated**, not new |
+| **Paying churn** | Downgraded from a paid plan (tier 2/3/4) to the free plan (tier 1) | `tier_id` drops to 1 in `public.fact_locations_by_day` | Yes — they can upgrade again |
+| **Hard churn / gone** | No longer using Homebase at all | No engagement in last 30 days. Churn date = last date `engagement_boolean = 1`. Some may also have `archived_at IS NOT NULL` in `public.locations` | Functionally permanent, though the account still exists |
+
+### Important Distinctions
+
+- **Engagement churn ≠ paying churn.** A location can stop engaging but remain on a paid plan (they're paying but not using it). A location can downgrade to free but still actively use Homebase (they're engaged but not paying).
+- **Downgrade ≠ paying churn.** Downgrading from Plus (tier 3) to Essentials (tier 2) is a downgrade, not paying churn — they're still paying. Paying churn specifically means dropping to the free tier (tier 1).
+- **Engagement churn is monthly.** Measured month-over-month: engaged last month, not engaged this month. If someone asks "who churned last month," they almost certainly mean engagement churn.
+- **"Is this customer still with us?"** = Check for any engagement in the last 30 days. If none, they've churned. The churn date is the last date they were engaged.
+
+### Resolution — When Someone Says "Churn"
+
+| Context | They probably mean | Metric |
+|---|---|---|
+| General ("how many locations churned?") | **Engagement churn** | Engaged in prior month, not engaged in current month |
+| Revenue context ("churn impact on ARR", "churn $") | **Paying churn** | Dropped from tier 2+ to tier 1 |
+| Retention analysis, customer health | **Engagement churn** | Month-over-month engagement comparison |
+| "Are they still a customer?" / "Did we lose them?" | **Hard churn** | No engagement in last 30 days |
+| "Net churn" (in WBR) | **Revenue churn** — already defined in WBR metrics | $ Upgrades − $ Downgrades (see Net Churn $ above) |
+
+---
+
 ## 📋 WBR / MBR Definitions
 
 | Metric / Term | Definition | Data Location |

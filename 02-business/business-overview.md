@@ -1,5 +1,7 @@
 # Homebase Business Context
 
+Load when you need entity relationships, revenue model, growth funnel, or diagnostic patterns for metric movements.
+
 ## Business Overview
 
 Homebase is a **B2B workforce management SaaS platform** serving small businesses. Product offering includes scheduling, time tracking, hiring, payroll, team messaging, and HR tools. Customers include both paid and free-tier businesses. Additional features may be unlocked through various pricing tiers.
@@ -57,6 +59,47 @@ Unless on trial, Team App subspcriptions follow this pricing model:
 
 Payroll is a separate subscription with its own paying status. Monthly subscription model with additional per-employee fees per payroll run. 
 More info on calculations provided in Payroll Domain Specific Files.
+
+---
+
+## How the Business Works
+
+### Growth Funnel
+
+```
+Marketing Spend (paid / organic / partner)
+  → Signups (new companies)
+    → 1D1 Activation (action within 24h)
+      → 2D7 (2+ active days in 7d)
+        → Engaged (core usage + OAM activity)
+          → Paying (upgrade to tier 2+)
+            → Retained (still engaged in future months)
+```
+
+Retained = still engaged. Does NOT require paying. Paying retention and engagement retention are tracked separately.
+
+### Revenue Model
+
+| Product | Model | Unit | Key metric |
+|---|---|---|---|
+| **Team App** | Location-level subscription | Monthly per location, tiered (Essentials / Plus / AiO) | MRR, ARR, paying locations |
+| **Payroll** | Separate subscription + per-employee fee | Monthly base + per-employee per payroll run | Payroll ARR, ran payroll %, win rate |
+| **Cash Out** | Employee-driven, transaction-based | $4.99 per instant advance | CO ARR, CO users, instant advance rate |
+| **Add-ons** | Subscription-based (varies) | Monthly per add-on | *Documentation gap — not yet centralized* |
+
+Revenue streams are independent. A company can pay for any combination. Cross-sell (attaching Payroll, Hiring, or CO to Team App) is a key growth lever.
+
+### Diagnostic Patterns
+
+IF a metric moves → check what's upstream or adjacent:
+
+| Symptom | First checks |
+|---|---|
+| Activation down (1D1 rate) | Marketing spend / channel mix (CPA spike?), signup volume by source, onboarding flow changes or experiments |
+| Engagement down | Which component (TT, scheduling, OAM)? Cut by tier, tenure, company size. Check launch timeline and experiment registry. Level shift (one-week) vs. trend (4+ weeks)? |
+| Churn up | Engagement churn or paying churn? (Independent.) Which segment by tier, geo, biz type, tenure. Pricing changes or plan migrations? |
+| Revenue flat, locations growing | ASP compression — new locations at lower tiers? Tier mix shift? Cross-sell (payroll, hiring) keeping pace? |
+| CO metrics declining | Check Looker first (source of truth) — Amplitude may be artifacting. Which funnel step? Segment by bank type. Non-repayment rate changes? |
 
 ---
 
