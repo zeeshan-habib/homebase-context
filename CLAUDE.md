@@ -12,6 +12,7 @@ Load files selectively based on the task - do not load everything at once. Alway
 | `02-business/` | Business overview, entity relationships, product timeline | When you need organizational context beyond specific metrics |
 | `03-data/` | Metric definitions, glossary, date conventions, product-domain schemas | When the question involves a specific metric, term, or product area |
 | `04-queries/` | Curated SQL queries organized by category | Any SQL question - scan `04-queries/INDEX.md` first |
+| `06-skills/` | Shared Claude Code skills (reusable workflows) | When you need a reusable workflow like dashboard creation |
 
 ## Rules
 

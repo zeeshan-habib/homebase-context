@@ -9,3 +9,8 @@
 
 # Sammy's test product context - sole owner
 05-sammy-test-product-context/ @sammyhalabi
+
+# Skills - each skill subfolder owned by its creator
+06-skills/ @v-tori @KPMcDonough49 @swonghb
+06-skills/create-amplitude-dashboard/ @swonghb
+06-skills/amplitude-eventing/ @tschmier @v-tori @swonghb
