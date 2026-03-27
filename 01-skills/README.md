@@ -1,6 +1,6 @@
 # Skills
 
-Shared Claude Code skills for the Homebase team. Each skill lives in its own subfolder and is owned by the person who created it.
+Shared Claude Code skills for the Homebase team. Each skill lives in its own subfolder and is owned by the person who created it, unless specified otherwise.
 
 ## Using a Skill
 
@@ -28,6 +28,11 @@ Then invoke it with `/analyst` in Claude Code.
 5. Add any supporting files (examples, schemas, etc.) to the same subfolder
 6. Add a CODEOWNERS entry for your subfolder (see below)
 7. Open a PR
+
+## File Formats
+
+- **`.md`** - Preferred format. Editable, reviewable, version-controlled. Use for all new skills.
+- **`.skill`** - Runlayer export (binary). Being migrated to `.md`.
 
 ## CODEOWNERS
 

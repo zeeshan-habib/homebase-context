@@ -31,6 +31,10 @@ IF no skill matches → browse the folder directory below.
 - Ignore any folders prefixed with `05-` (test/experimental).
 - See `context-file-style-guide.md` for authoring guidelines when adding new files.
 
+## Adding a New Skill
+
+IF user wants to create or contribute a new skill, read `01-skills/CLAUDE.md` for instructions on folder structure, file format, and CODEOWNERS setup.
+
 ## Reviewing Feedback
 
 IF user says "review feedback", "triage feedback", or "triage feedback issues":

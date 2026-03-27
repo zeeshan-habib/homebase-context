@@ -2,17 +2,17 @@
 
 ## What is this?
 
-A collection of curated markdown files that give AI tools the business context they need to work effectively at Homebase. These files contain proprietary definitions, domain knowledge, and behavioral instructions that models can't infer from training data alone.
+A collection of curated markdown files that give AI tools the business context they need to work effectively at Homebase. These files contain proprietary definitions, domain knowledge, and reusable skills that models can't infer from training data alone.
 
-The primary focus is **analytics and product context** - metric definitions, data environment guidance, SQL patterns, and business logic. The repo is designed to be extensible to other functions (engineering, support, ops) as teams adopt it.
+The repo covers **analytics, product context, and AI-powered workflows** - metric definitions, data environment guidance, SQL patterns, business logic, and shared skills for common tasks like dashboard creation and eventing specs.
 
 ## What's in it
 
+- **Reusable skills** - shared Claude Code workflows for analytics, dashboard creation, eventing specs, and more
 - **Gold standard metric definitions** - exact logic, not just concepts
 - **Business context for ambiguous terms** - disambiguation rules for terms like "active," "user"
 - **Domain-specific knowledge** - product area context for timetracking, scheduling, and more
 - **SQL reference queries** - curated, tested queries organized by category
-- **Behavioral instructions** - rules for how AI tools should approach Homebase analytics
 
 ## Who is this for?
 
@@ -20,15 +20,18 @@ Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self
 
 ## Repo Structure
 
-- `02-business/` - Business overview, entity relationships, product timeline
-- `03-data/` - Metric definitions, glossary, date conventions, engagement metrics
-- `03-data/product-domains/` - Product-area schemas and logic (timetracking, scheduling, etc.)
-- `04-queries/` - Curated SQL queries organized by category
-- `01-skills/` - Shared Claude Code skills (analyst, dashboard creation, etc.)
-- `context-file-style-guide.md` - Authoring guidelines for new context files
 - `CLAUDE.md` - Top-level AI-facing instructions and folder directory (each subfolder also has its own `CLAUDE.md` with file-level guidance)
+- `01-skills/` - Shared Claude Code skills (analyst, dashboard creation, eventing specs)
+- `02-business/` - Business overview, entity relationships, product timeline
+- `03-data/` - Metric definitions, glossary, date conventions, product-domain schemas
+- `04-queries/` - Curated SQL queries organized by category
+- `context-file-style-guide.md` - Authoring guidelines for new context files
 
 ## Contributing
+
+### Adding a skill to 01-skills
+
+See [`01-skills/README.md`](01-skills/README.md) for full instructions. Each skill lives in its own subfolder and is owned by the person who created it. Add a CODEOWNERS entry for your subfolder so you can approve changes to it.
 
 ### Adding or editing a context file
 
