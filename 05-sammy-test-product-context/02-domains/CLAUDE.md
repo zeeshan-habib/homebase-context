@@ -1,0 +1,9 @@
+# Product Domains
+
+Domain-specific product context. Each subfolder covers one product area with its workflows, customer archetypes, and metrics.
+
+| Domain | Folder | When to load |
+|---|---|---|
+| HRM (Team Management) | `hrm/` | Questions about employee onboarding, documents, job history, team management |
+
+To add a new domain: copy the `hrm/` stub structure, run `/seed-product-context`, and fill via interview.
