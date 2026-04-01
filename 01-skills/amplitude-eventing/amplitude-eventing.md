@@ -17,11 +17,22 @@ Creates a Confluence page with Amplitude event tracking requirements for a new f
 
 ## Hardcoded Resources
 
-- **Web Events Charter**: https://joinhomebase.atlassian.net/wiki/spaces/ENGINEERIN/pages/2133590032/Web+Events+Charter (page ID: `2133590032`)
-- **Mobile Events Charter**: https://joinhomebase.atlassian.net/wiki/spaces/ENGINEERIN/pages/2177040428/Mobile+Events+Charter (page ID: `2177040428`)
+- **Events Charter (Google Doc)**: https://docs.google.com/document/d/1yU151NEOxFJ4aA8Rys4QZfPwRK26zoxKIf-Jicnzon8/edit?tab=t.p794is70chy — consolidated naming conventions, approved event names, required properties, and audit standards. Use the "Building an LLM Friendly Charter" tab.
 - **Output Confluence Space**: `BizOps` space, parent folder ID `4233756705`
 - **Cloud ID**: `joinhomebase.atlassian.net`
 - **Example page** (use as format reference): page ID `4817780866`
+
+## Eventing Philosophy
+
+Comprehensive coverage is the baseline. But comprehensive alone isn't enough. A spec that doesn't help us understand meaningful user behavior - or can't answer "is this feature or flow working?" - is missing the point.
+
+**After generating the full event list, pressure-test it against these questions:**
+1. **Is the success outcome captured?** What's the thing this feature/flow is trying to drive - and is there an event (or sequence of events) that tells us it happened?
+2. **Are failure states visible?** If a critical action fails, would we know? Or does the spec only capture the happy path?
+3. **Can we build funnels?** Are the entry points, decision points, and exit points all instrumented so analysts can see where users drop off or diverge?
+4. **Can we answer the PM's question?** If someone asks "is this feature/flow working?" in a month, do these events give us enough signal?
+
+If the answer to any of these is no, add what's missing. This is about layering outcome-awareness on top of thorough UI coverage - not replacing it.
 
 ## Inputs Required from User
 
@@ -43,19 +54,14 @@ Fetch the example Confluence page (ID: `4817780866`) using `getConfluencePage` t
 - How sections are divided by platform/surface (e.g. "EE Mobile — In-App Flow", "EE iOS Live Activity", "EE Android Notifications")
 - Use of `---` horizontal rules between sections
 
-### Step 2: Fetch the Charter Pages
+### Step 2: Fetch the Events Charter
 
-Fetch both charter pages to load event naming conventions and property standards:
-- Web charter: page ID `2133590032` — note the event naming conventions for web surfaces
-- Mobile charter: page ID `2177040428` — note the event naming conventions for mobile surfaces
-
-These charter pages are mostly index pages. Their child pages contain the actual event specs. If you need specific event definitions, use `getConfluencePageDescendants` to find relevant child pages and fetch them.
-
-Key things to extract from charters:
-- Standard event names (e.g. `Screen Viewed`, `Button Clicked`, `Modal Viewed`, `Push Notification Clicked`)
+Fetch the Events Charter Google Doc (see Hardcoded Resources) to load event naming conventions and property standards. Key things to extract:
+- Approved event names per platform (web vs. mobile)
 - Standard property naming conventions (snake_case)
 - Which properties are required on all events vs. event-specific
 - How `product_area` and `event_category` should be set
+- Critical business events that should stay granular (not consolidated)
 
 ### Step 3: Fetch the Jira Epic
 
@@ -97,10 +103,10 @@ Using all gathered context, reason through which Amplitude events to fire:
 
 **For each screen/surface identified in Figma:**
 1. Does it represent a new view the user sees? → `Screen Viewed` (mobile) or `Page Viewed` (web)
-2. Are there buttons/CTAs? → `Button Clicked` for each meaningful interaction
+2. Are there buttons/CTAs? → `Button Clicked` for each meaningful button, `Link Clicked` for each meaningful link
 3. Are there modals or dialogs? → `Modal Viewed` when shown, `Button Clicked` for modal actions
 4. Are there push notifications or live activities? → `Push Notification Clicked`
-5. Are there forms? → `Form Submitted` or appropriate event on submission
+5. Are there forms? → Use the appropriate approved event for the submit action (e.g. `Button Clicked` on the submit button)
 
 **For each event, determine:**
 - **Screen**: The UI surface where it occurs (match Figma frame names)
@@ -118,6 +124,8 @@ Using all gathered context, reason through which Amplitude events to fire:
 
 **Critical Business Events:**
 - If any events represent critical business actions (e.g. transactions, key lifecycle moments), add a callout note (blockquote) at the top flagging them as candidates for server-side events, advising alignment with Analytics.
+
+**Pressure-test the event list:** After completing the list above, apply the questions from the Eventing Philosophy section. Check that the success outcome is captured, failure states are visible, funnels can be built, and the spec can answer "is this feature or flow working?" Fill any gaps before proceeding.
 
 ### Step 6: Organize by Platform / Surface
 
@@ -268,7 +276,7 @@ Before creating the page, verify:
 - [ ] Epic link and Figma link appear at the top
 - [ ] All event names follow charter conventions (no invented names)
 - [ ] All property keys are `snake_case`
-- [ ] Each meaningful button/CTA has a `Button Clicked` event
+- [ ] Each meaningful button/CTA has a `Button Clicked` or `Link Clicked` event
 - [ ] Each new screen has a `Screen Viewed` or `Page Viewed` event
 - [ ] Common properties are factored out per section (not repeated per row)
 - [ ] Critical business events are flagged in a callout note
@@ -277,6 +285,9 @@ Before creating the page, verify:
 - [ ] First column of each screen group contains a `mediaSingle` ADF node with the Figma screenshot CDN URL
 - [ ] Fallback to plain screen name text if screenshot URL is unavailable
 - [ ] Confluence page URL has been appended to the bottom of the Jira ticket description
+- [ ] Success outcome for the feature/flow is captured by at least one event or event sequence
+- [ ] Failure states for critical actions are instrumented (not just the happy path)
+- [ ] Entry points, decision points, and exit points are covered for funnel analysis
 
 ---
 
@@ -285,7 +296,6 @@ Before creating the page, verify:
 - **Web-only features**: Skip mobile sections entirely; use `Page Viewed` instead of `Screen Viewed`
 - **Mobile-only features**: Skip web sections
 - **If Figma URL has a specific node-id**: Pass it directly to Figma MCP for focused context
-- **Charter child pages**: If the charter index pages don't have enough detail, fetch child pages using `getConfluencePageDescendants` to find specific event definitions
 - **Rows with no Amplitude event**: Include them in the table with "Display only — no Amplitude event" in the Event Name column (see example: Android Status Bar Chip)
 - **Figma node IDs in API calls**: The Figma Images API requires node IDs with `-` replaced by `:` (e.g. `123:456`, not `123-456`). The MCP `get_design_context` response typically returns IDs in the `123:456` format already.
 - **Screenshot CDN URL expiry**: Figma CDN URLs expire after ~14 days. The Confluence page will show broken images after expiry, but this is acceptable for a spec document used near the time of feature development.
