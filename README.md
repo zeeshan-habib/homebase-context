@@ -2,17 +2,16 @@
 
 ## What is this?
 
-A collection of curated markdown files that give AI tools the business context they need to work effectively at Homebase. These files contain proprietary definitions, domain knowledge, and reusable skills that models can't infer from training data alone.
+A collection of curated markdown files that give AI tools the business context they need to work effectively at Homebase. These files contain proprietary definitions, domain knowledge, and gotchas that models can't infer from training data alone.
 
-The repo covers **analytics, product context, and AI-powered workflows** - metric definitions, data environment guidance, SQL patterns, business logic, and shared skills for common tasks like dashboard creation and eventing specs.
+This repo is **pure context** - plain English definitions, domain knowledge, data pointers, and gotchas. Skills and interaction logic live in a separate repo and are exposed through plugins.
 
 ## What's in it
 
-- **Reusable skills** - shared Claude Code workflows for analytics, dashboard creation, eventing specs, and more
-- **Gold standard metric definitions** - exact logic, not just concepts
-- **Business context for ambiguous terms** - disambiguation rules for terms like "active," "user"
-- **Domain-specific knowledge** - product area context for timetracking, scheduling, and more
-- **SQL reference queries** - curated, tested queries organized by category
+- **Business context** - what Homebase is, product suite, OKRs, customer segments, product glossary
+- **Domain-specific knowledge** - product area context for HRM, scheduling, and more (managed by domain PMs)
+- **Gold standard metric definitions** - exact logic, disambiguation rules, owned by analytics
+- **Data environment guidance** - date conventions, table references, product-area schemas
 
 ## Who is this for?
 
@@ -21,18 +20,25 @@ Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self
 ## Repo Structure
 
 - `CLAUDE.md` - Top-level AI-facing instructions and folder directory (each subfolder also has its own `CLAUDE.md` with file-level guidance)
-- `01-skills/` - Shared Claude Code skills (analyst, dashboard creation, eventing specs)
-- `02-business/` - Business overview, entity relationships, product timeline
-- `03-data/` - Metric definitions, glossary, date conventions, product-domain schemas
-- `04-queries/` - Curated SQL queries organized by category
+- `global/` - Business overview, product suite, OKRs, customer segments, product glossary
+- `domains/` - Domain-specific product context (one subfolder per product area, starting with HRM)
+- `data/` - Metric definitions, analytics glossary, date conventions, product-area data schemas
 - `context-file-style-guide.md` - Authoring guidelines for new context files
+
+## Ownership
+
+Analytics is the DRI for foundational truths about the business and its metrics. This covers both `global/` (cross-domain business context) and `data/` (metric definitions, data schemas). Anyone can open a PR to contribute - Analytics reviews and manages merges.
+
+Domain teams own their `domains/` subfolders. They control their product context (workflows, customer archetypes, data models). Analytics can help, advise on best practices, and hold people accountable if context goes stale or drifts from the source of truth.
+
+| Folder | DRI | Who can PR | Who reviews/merges |
+|---|---|---|---|
+| `global/` | Analytics | Anyone | Analytics |
+| `data/` | Analytics | Anyone | Analytics |
+| `domains/[area]/` | Domain PM | Anyone | Domain PM + Analytics |
 
 ## Contributing
 
-Use the `/contribute-context` skill in Claude Code to start any contribution - it handles pulling main, creating a branch, and following the repo's conventions.
-
 Each folder has a `CLAUDE.md` that serves as the file index for AI tools - if you add a new file, update the relevant `CLAUDE.md` to include it. See [`context-file-style-guide.md`](context-file-style-guide.md) for authoring guidelines.
-
-Each skill lives in its own subfolder and is owned by the person who created it. See [`01-skills/README.md`](01-skills/README.md) for details on adding skills.
 
 For project background and roadmap, see the [Structure & Plan](https://docs.google.com/document/d/1UM4C-UrP9I7CqhjR829C-B3Se_l_V-TJfcegKkcb2K0/edit) doc.

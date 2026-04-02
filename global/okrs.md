@@ -9,7 +9,7 @@ source: stub
 
 Load when answering questions about strategic priorities, OKRs, or what teams are focused on.
 
-This is the **canonical source** for company and domain OKRs, maintained as an output of EPD planning. Domain-level files (`02-domains/*/okrs-and-metrics.md`) reference this file and may add local overrides.
+This is the **canonical source** for company and domain OKRs, maintained as an output of EPD planning. Domain-level files (`domains/*/okrs-and-metrics.md`) reference this file and may add local overrides.
 
 ## Company-Level OKRs
 

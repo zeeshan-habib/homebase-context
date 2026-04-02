@@ -5,9 +5,9 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: stub
 refs:
-  - 05-sammy-test-product-context/01-company/okrs.md
-  - 05-sammy-test-product-context/01-company/metrics.md
-  - 03-data/engagement-metrics.md
+  - global/okrs.md
+  - global/metrics.md
+  - data/engagement-metrics.md
 ---
 # HRM OKRs and Metrics
 
@@ -15,7 +15,7 @@ Load when answering "what does [metric] mean for HRM?" or questions about HRM st
 
 ## Inherited OKRs
 
-Source: `01-company/okrs.md` — update there first.
+Source: `global/okrs.md` — update there first.
 
 <!-- STUB: Pull HRM-relevant OKRs from the company file once populated. Format:
 - O1: [objective]
@@ -25,7 +25,7 @@ Source: `01-company/okrs.md` — update there first.
 
 ## Local Overrides
 
-<!-- STUB: Domain-specific OKRs or framing not yet in the company file. These get promoted to 01-company/okrs.md during the next EPD planning cycle. -->
+<!-- STUB: Domain-specific OKRs or framing not yet in the company file. These get promoted to global/okrs.md during the next EPD planning cycle. -->
 
 ## Metrics That Matter for HRM
 
@@ -33,8 +33,8 @@ Source: `01-company/okrs.md` — update there first.
 
 | Company Metric | How HRM Relates | Reference |
 |---|---|---|
-| Engaged Locations | HR Docs engagement is a component of feature engagement | `homebase-context/03-data/engagement-metrics.md` |
-| NRR | Better onboarding → higher retention → better NRR | `01-company/metrics.md` |
+| Engaged Locations | HR Docs engagement is a component of feature engagement | `data/engagement-metrics.md` |
+| NRR | Better onboarding → higher retention → better NRR | `global/metrics.md` |
 | <!-- STUB --> | <!-- STUB --> | <!-- STUB --> |
 
 ### HRM-Specific Metrics
@@ -46,4 +46,4 @@ Source: `01-company/okrs.md` — update there first.
 | <!-- STUB: Time to complete onboarding? --> | <!-- STUB --> | <!-- STUB --> |
 | <!-- STUB: Document completion by type? --> | <!-- STUB --> | <!-- STUB --> |
 
-For SQL/column definitions of any metric, see `homebase-context/03-data/`.
+For SQL/column definitions of any metric, see `data/`.

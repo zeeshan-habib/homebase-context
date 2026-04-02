@@ -5,7 +5,7 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: vault
 refs:
-  - 02-business/business-overview.md
+  - global/business-overview.md
 ---
 # Business Overview
 

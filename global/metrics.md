@@ -5,12 +5,12 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: vault
 refs:
-  - 03-data/engagement-metrics.md
-  - 03-data/glossary.md
+  - data/engagement-metrics.md
+  - data/glossary.md
 ---
 # Company-Wide Metrics
 
-Load when answering "what does [metric] mean?" at the company level. For SQL/column definitions, see `homebase-context/03-data/`. For domain-specific metric context, see `02-domains/*/okrs-and-metrics.md`.
+Load when answering "what does [metric] mean?" at the company level. For SQL/column definitions, see `data/`. For domain-specific metric context, see `domains/*/okrs-and-metrics.md`.
 
 ## Top-Line Revenue Metrics
 

@@ -5,7 +5,7 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: vault
 refs:
-  - 03-data/glossary.md
+  - data/glossary.md
 ---
 # Product Suite
 

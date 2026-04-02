@@ -5,7 +5,7 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: stub
 refs:
-  - 01-company/business-overview.md
+  - global/business-overview.md
 ---
 # HRM Data Model
 

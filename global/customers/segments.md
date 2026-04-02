@@ -5,7 +5,7 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: vault
 refs:
-  - 02-business/business-overview.md
+  - global/business-overview.md
 ---
 # Customer Segments
 
@@ -63,4 +63,4 @@ Payroll customers skew toward Plus and All-in-One tiers. Cash Out usage is indep
 | Manager | Scheduling, timesheets, team communication | Moderate | Web + Mobile |
 | Employee | Clock in/out, view schedule, complete onboarding | Variable (often lower) | Mobile-first |
 
-For domain-specific customer archetypes, see `02-domains/[domain]/customers.md`.
+For domain-specific customer archetypes, see `domains/[domain]/customers.md`.

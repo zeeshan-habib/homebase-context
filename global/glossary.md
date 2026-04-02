@@ -5,11 +5,11 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: vault
 refs:
-  - 03-data/glossary.md
+  - data/glossary.md
 ---
 # Product Glossary
 
-Load when encountering an unfamiliar Homebase product term. For analytics/data terms (table names, SQL, metric computation), see `homebase-context/03-data/glossary.md` instead.
+Load when encountering an unfamiliar Homebase product term. For analytics/data terms (table names, SQL, metric computation), see `data/glossary.md` instead.
 
 ## People & Roles
 
