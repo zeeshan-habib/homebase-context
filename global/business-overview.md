@@ -46,6 +46,20 @@ Payroll is billed per company + per employee, separate from tier pricing.
 
 Key distinction: a **company** decides to pay for Homebase (billing entity). A **location** is where employees work and schedules are built (operational entity). Most metrics are reported at the location level.
 
+## Growth Funnel
+
+```
+Marketing Spend (paid / organic / partner)
+  → Signups (new companies)
+    → 1D1 Activation (action within 24h)
+      → 2D7 (2+ active days in 7d)
+        → Engaged (core usage + OAM activity)
+          → Paying (upgrade to tier 2+)
+            → Retained (still engaged in future months)
+```
+
+Retained = still engaged. Does NOT require paying. Paying retention and engagement retention are tracked separately.
+
 ## Revenue Lines
 
 | Product | Revenue Model |

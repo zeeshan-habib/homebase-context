@@ -1,19 +1,17 @@
-# Engagement Metrics — Definitions, Columns & SQL Examples
+# Engagement Metrics — Querying Details & SQL Examples
 
 ## Overview
 
-This document is the **single source of truth** for Homebase's product engagement metric definitions. These metrics measure how actively customers use various Homebase features.
-
-**When to use this file:** Any question about general engagement, feature adoption, active locations/companies, or DAU/WAU/MAU.
+This document provides additional guidance on querying engagement metrics.  Refer to this when calculating engagement metrics.
 
 ---
 
 ## Primary Tables
 
-| Table | Schema | Grain | Description |
-|-------|--------|-------|-------------|
-| `product_location_engagement_metrics` | `bizops` | One row per location per date | Location-level engagement booleans |
-| `product_company_engagement_metrics` | `bizops` | One row per company per date | Company-level engagement booleans (HR docs, messaging) |
+| Table | Schema | Catalog | Grain | Description |
+|-------|--------|---------|-------|-------------|
+| `product_location_engagement_metrics` | `bizops` | prod_redshift_replica | One row per location per date | Location-level engagement booleans |
+| `product_company_engagement_metrics` | `bizops` | prod_redshift_replica | One row per company per date | Company-level engagement booleans |
 
 ### Join Pattern
 
@@ -42,121 +40,6 @@ A **location is engaged** if it meets **ALL** of these criteria:
 2. **Management activity:** Any Owner, Admin, or Manager (OAM) activity (past 30 days)
 
 This ensures we measure businesses actively using Homebase's core value proposition AND with active management oversight.
-
-| Column | Table | Description |
-|--------|-------|-------------|
-| `engagement_boolean` | `bizops.product_location_engagement_metrics` | 1 if location is engaged on this date |
-| `engagement_boolean_30d_ago` | `bizops.product_location_engagement_metrics` | 1 if location was engaged 30 days prior |
-
----
-
-## Feature Engagement Definitions
-
-### Location-Level Features
-
-#### OAM Activity
-**Measures:** Any Owner, Admin, or Manager activity in the product.
-**Lookback:** 30 days
-**Threshold:** Any UX event activity
-**Context:** Component of the core engagement definition. Ensures active management oversight.
-
-| `oam_activity_boolean` | `oam_activity_boolean_30d_ago` |
-|---|---|
-
-#### Time Offs Engaged
-**Measures:** Use of time-off request system.
-**Lookback:** 7 days
-**Threshold:** 2+ time off requests OR 10%+ of roster with a time off request
-**Context:** Situational but indicates mature product usage. Centralizes PTO management.
-
-| `time_offs_engaged_boolean` | `time_offs_engaged_boolean_30d_ago` |
-|---|---|
-
-#### Hiring Engaged
-**Measures:** Active use of hiring and applicant tracking features.
-**Lookback:** 30 days (longer because hiring is episodic)
-**Threshold:** 10+ hiring events (job posts, applicant views, etc.)
-**Context:** Important expansion feature beyond core scheduling/time tracking.
-
-| `hiring_engaged_boolean` | `hiring_engaged_boolean_30d_ago` |
-|---|---|
-
-
-#### Manager Log Engaged
-**Measures:** Use of manager communication/logging feature.
-**Lookback:** 7 days
-**Threshold:** 2+ manager log posts OR 20%+ of managers have posted a log
-**Context:** Helps with shift handoffs and operational continuity.
-
-| `manager_log_engaged_boolean` | `manager_log_engaged_boolean_30d_ago` |
-|---|---|
-
-#### Department Management Engaged
-**Measures:** Use of department-based scheduling and permissions.
-**Lookback:** 8 days
-**Requirements (ONE path):**
-- **Path 1:** Plus plan or higher AND department scheduling pageview in past 8 days
-- **Path 2:** Department management permissions enabled for managers AND has at least one manager AND scheduling engaged
-**Context:** Indicates larger, more complex businesses with specialized scheduling needs.
-
-| `department_management_engaged_boolean` | `department_management_engaged_boolean_30d_ago` |
-|---|---|
-
-
----
-
-### Company-Level Features
-
-> When a company is engaged with these features, **ALL** of its locations are considered engaged.
-
-#### HR Docs Engaged
-**Measures:** Use of digital onboarding and document management.
-**Threshold:** Any of the three most recently added employees have an associated onboarding document.
-**Context:** Focuses on recent hires to measure ongoing usage, not historical adoption.
-
-| `hrdocs_engaged_boolean` | `hrdocs_engaged_boolean_30d_ago` |
-|---|---|
-
-#### Messaging Engaged
-**Measures:** Use of team communication features.
-**Lookback:** 7 days
-**Threshold:** 10+ messages sent OR 20%+ of roster with a message sent
-**Context:** Indicates Homebase is becoming the central hub for workforce management.
-
-| `messaging_engaged_boolean` | `messaging_engaged_boolean_30d_ago` |
-|---|---|
-
----
-
-## Quick Reference: All Columns
-
-### Location-Level (`bizops.product_location_engagement_metrics`)
-
-| Feature | Current Column | 30 Days Ago Column | Lookback |
-|---------|----------------|-------------------|----------|
-| Core Engaged | `engagement_boolean` | `engagement_boolean_30d_ago` | 7d + 30d |
-| Time Tracking | `time_tracking_engaged_boolean` | `time_tracking_engaged_boolean_30d_ago` | 7 days |
-| Scheduling | `scheduling_engaged_boolean` | `scheduling_engaged_boolean_30d_ago` | 7 days |
-| Mobile Time Tracking | `mobile_time_tracking_engaged_boolean` | `mobile_time_tracking_engaged_boolean_30d_ago` | 7 days |
-| Shift Trades | `shift_trades_engaged_boolean` | `shift_trades_engaged_boolean_30d_ago` | 7 days |
-| Time Offs | `time_offs_engaged_boolean` | `time_offs_engaged_boolean_30d_ago` | 7 days |
-| Hiring | `hiring_engaged_boolean` | `hiring_engaged_boolean_30d_ago` | 30 days |
-| Geofencing | `geofencing_engaged_boolean` | `geofencing_engaged_boolean_30d_ago` | 7 days |
-| Manager Log | `manager_log_engaged_boolean` | `manager_log_engaged_boolean_30d_ago` | 7 days |
-| Dept Management | `department_management_engaged_boolean` | `department_management_engaged_boolean_30d_ago` | 8 days |
-| Overtime Prefs | `overtime_preferences_engaged_boolean` | `overtime_preferences_engaged_boolean_30d_ago` | 7 days |
-| Break Prefs | `break_preferences_engaged_boolean` | `break_preferences_engaged_boolean_30d_ago` | 7 days |
-| Shift Notes | `shift_notes_engaged_boolean` | `shift_notes_engaged_boolean_30d_ago` | 7 days |
-| OAM Activity | `oam_activity_boolean` | `oam_activity_boolean_30d_ago` | 30 days |
-
-### Company-Level (`bizops.product_company_engagement_metrics`)
-
-| Feature | Current Column | 30 Days Ago Column | Lookback |
-|---------|----------------|-------------------|----------|
-| HR Docs | `hrdocs_engaged_boolean` | `hrdocs_engaged_boolean_30d_ago` | Recent hires |
-| Messaging | `messaging_engaged_boolean` | `messaging_engaged_boolean_30d_ago` | 7 days |
-
----
 
 ## Time Comparison: "On Day" vs "30d Ago"
 

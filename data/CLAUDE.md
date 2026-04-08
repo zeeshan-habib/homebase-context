@@ -1,33 +1,33 @@
 # Data Context
 
-The precision layer. Always load `glossary.md` first for any metric or term question - it is the canonical index of all analytics-approved metric definitions.
+Metric definitions, schema reference, and product-area data guides.
 
-## Always Load
-
-| File | Why |
-|---|---|
-| `glossary.md` | Canonical metric definitions, disambiguation rules, pointers to deeper files |
-| `date-conventions.md` | Date filtering, period grouping, cohort windows (D1, D14, D30, etc.) |
-
-## Load When Relevant
+## File Index
 
 | File | When to load |
 |---|---|
-| `business-data-reference.md` | Entity relationships, key tables, join patterns, diagnostic patterns for metric movements |
-| `engagement-metrics.md` | Engagement metric questions related to product usage |
-| `activation-metrics.md` | Activation or onboarding metric questions |
-| `locations.md` | Location-level questions |
+| `glossary.md` | Any metric question — this is the canonical source for all metric definitions. Always check here first. |
+| `schema-reference.md` | Core tables, join patterns, key identifiers, locations schema, pricing tier data columns |
+| `engagement-metrics.md` | Detailed engagement boolean definitions — thresholds, lookback windows, column names |
+| `activation-metrics.md` | Activation lifecycle metric columns and tables |
 
 ## Product Areas
 
-| File | When to load |
+| Folder/File | When to load |
 |---|---|
-| `product-areas/timetracking.md` | Timecards, clock-in/out, breaks, manager edits, ACO/ACI |
-| `product-areas/scheduling.md` | Shifts, schedules, open shifts, publishing, shift edits, shift trades |
-| `product-areas/cash-out/` | Cash Out advances, eligibility, financials, funnel, experiments |
-| `product-areas/hiring-assistant.md` | Hiring-related data |
+| `product-areas/time-tracking/` | Time tracking data gotchas, join caveats, disambiguation |
+| `product-areas/scheduling.md` | Scheduling-specific data context |
+| `product-areas/cash-out/` | Cash Out data — eligibility, financials, funnel, experiments |
+| `product-areas/hiring-assistant.md` | Hiring-specific data context |
 
-## Rules
+## Navigation Rules
 
-- Never define metrics outside of `glossary.md`. If a metric is missing, add it there.
-- If a question involves a metric not in the glossary, say so. Do not guess a definition.
+- Always load `glossary.md` first for any metric question. It contains brief definitions and links to detailed files when more context is needed.
+- Only load `schema-reference.md` if the question requires knowing which tables to query, how to join them, or what columns exist.
+- Only load a product-area file if the question is specifically about that domain's data nuances.
+
+## Behavioral Rules
+
+- `glossary.md` is the single source of truth for metric definitions. Never define metrics elsewhere.
+- If a metric, table, or column is not documented in these files, say so. Do not guess or invent.
+- Product-area files contain data gotchas and schema context, not product descriptions. For how the product works, load from `domains/` instead.

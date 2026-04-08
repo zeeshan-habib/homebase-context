@@ -1,9 +1,22 @@
 # Product Domains
 
-Domain-specific product context. Each subfolder covers one product area with its workflows, customer archetypes, and metrics.
+Domain-specific product context. Each subfolder covers one product area — how it works, who uses it, and what to know.
+
+## Domain Directory
 
 | Domain | Folder | When to load |
 |---|---|---|
-| HRM (Team Management) | `hrm/` | Questions about employee onboarding, documents, job history, team management |
+| HRM (Team Management) | `hrm/` | Employee onboarding, documents, job history, team management |
+| Time Tracking | `time-tracking/` | Timecards, clock-in/out, breaks, payroll assistants (ACO/ACI) |
 
-To add a new domain: copy the `hrm/` structure as a template and fill via the seed-product-context interview protocol (in the skills repo).
+## Navigation Rules
+
+- Each domain folder has its own CLAUDE.md — read that first to find the right file within the domain.
+- If the question spans multiple domains, load only the relevant files from each — not the entire folder.
+- If a domain doesn't have a folder here yet, say so. Do not infer product context from other sources.
+
+## Behavioral Rules
+
+- Domain files describe how the product works and who uses it. They never define metrics — metric definitions live only in `data/glossary.md`.
+- If a domain file references a metric (e.g., "TT Engaged"), always validate the definition against `data/glossary.md` before using it.
+- For data-specific context (gotchas, schemas, join patterns) within a product area, load from `data/product-areas/` instead.
