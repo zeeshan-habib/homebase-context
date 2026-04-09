@@ -19,12 +19,13 @@ Metric definitions, schema reference, and product-area data guides.
 | `product-areas/scheduling.md` | Scheduling-specific data context |
 | `product-areas/cash-out/` | Cash Out data — eligibility, financials, funnel, experiments |
 | `product-areas/hiring-assistant.md` | Hiring-specific data context |
+| `product-areas/hrm/` | HRM data — NHP funnel gotchas, onboarding metrics, HR Docs engagement caveats |
 
 ## Navigation Rules
 
 - Always load `glossary.md` first for any metric question. It contains brief definitions and links to detailed files when more context is needed.
 - Only load `schema-reference.md` if the question requires knowing which tables to query, how to join them, or what columns exist.
-- Only load a product-area file if the question is specifically about that domain's data nuances.
+- Only load a product-area file if the question is specifically about that domain’s data nuances.
 
 ## Behavioral Rules
 
