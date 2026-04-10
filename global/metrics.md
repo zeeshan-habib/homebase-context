@@ -5,7 +5,7 @@ review_cadence: quarterly
 next_review: 2026-07-01
 source: vault
 refs:
-  - data/engagement-metrics.md
+  - data/engagement/engagement-metrics.md
   - data/glossary.md
 ---
 # Company-Wide Metrics

@@ -2,7 +2,7 @@
 
 Specific definitions, gotchas, disambiguation, data boundaries, and pointers for time tracking data.
 For metric definitions, see the cross-cutting files (`data/glossary.md`,
-`engagement-metrics.md`). For product context, see `domains/time-tracking/`.
+`engagement/engagement-metrics.md`). For product context, see `domains/time-tracking/`.
 
 
 

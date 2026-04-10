@@ -7,7 +7,7 @@ source: stub
 refs:
   - global/okrs.md
   - global/metrics.md
-  - data/engagement-metrics.md
+  - data/engagement/engagement-metrics.md
 ---
 # HRM OKRs and Metrics
 
@@ -33,7 +33,7 @@ Source: `global/okrs.md` — update there first.
 
 | Company Metric | How HRM Relates | Reference |
 |---|---|---|
-| Engaged Locations | HR Docs engagement is a component of feature engagement | `data/engagement-metrics.md` |
+| Engaged Locations | HR Docs engagement is a component of feature engagement | `data/engagement/engagement-metrics.md` |
 | NRR | Better onboarding → higher retention → better NRR | `global/metrics.md` |
 | <!-- STUB --> | <!-- STUB --> | <!-- STUB --> |
 

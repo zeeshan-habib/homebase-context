@@ -8,8 +8,7 @@ Metric definitions, schema reference, and product-area data guides.
 |---|---|
 | `glossary.md` | Any metric question — this is the canonical source for all metric definitions. Always check here first. |
 | `schema-reference.md` | Core tables, join patterns, key identifiers, locations schema, pricing tier data columns |
-| `engagement-metrics.md` | Detailed engagement boolean definitions — thresholds, lookback windows, column names |
-| `activation-metrics.md` | Activation lifecycle metric columns and tables |
+| `engagement/engagement-metrics.md` | Detailed engagement boolean definitions — thresholds, lookback windows, column names |
 
 ## Product Areas
 
@@ -20,6 +19,7 @@ Metric definitions, schema reference, and product-area data guides.
 | `product-areas/cash-out/` | Cash Out data — eligibility, financials, funnel, experiments |
 | `product-areas/hiring-assistant.md` | Hiring-specific data context |
 | `product-areas/hrm/` | HRM data — NHP funnel gotchas, onboarding metrics, HR Docs engagement caveats |
+| `product-areas/payroll/` | Payroll data — key tables, MRR components, cohort definitions, join gotchas, churn groupings |
 
 ## Navigation Rules
 
