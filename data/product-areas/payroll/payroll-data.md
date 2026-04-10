@@ -3,19 +3,6 @@
 Specific definitions, gotchas, disambiguation, and pointers for payroll data.
 For metric definitions, see `data/glossary.md`. For product context, see `domains/payroll/`.
 
-## Source of Truth
-
-The primary Looker model for payroll is `Payroll.model.lkml` in the `looker` repo. It contains 60+ explores. The most important are:
-
-| Explore | Use for |
-|---|---|
-| `payroll_payroll_runs` | Run execution, earnings, employees/contractors paid |
-| `payroll_canonical_mrr` | Monthly revenue, ASP, churn, cohort analysis |
-| `zoho_payroll_opportunities` | Sales pipeline, opportunity funnel, conversion rates |
-| `payroll_companies_pdt` | Company payroll config, pay frequency, run history |
-
----
-
 ## Gotchas & Caveats
 
 ### Payroll runs aggregate employees AND contractors
@@ -36,7 +23,7 @@ A company on a 3-month promo is counted as a customer from day one, but their `f
 
 ### Opportunity snapshots are point-in-time
 
-The `zoho_payroll_opportunities` explore captures product metrics (employee count, tier, price, team members active) as of the opportunity creation date via `prod_redshift_replica.public.fact_locations_by_day`. These do not update — they reflect the company's state when the opp was created.
+Opportunity records capture product metrics (employee count, tier, price, team members active) as of the opportunity creation date via `prod_redshift_replica.public.fact_locations_by_day`. These do not update — they reflect the company's state when the opp was created.
 
 ### Pay period mismatch = OT risk
 
@@ -123,6 +110,6 @@ Total Homebase Payroll MRR is built from three parts:
 | "Ran payroll" | `first_payroll_date IS NOT NULL` on the opportunity | `status` on `payroll_payroll_runs` (that's individual run status) |
 | "Paying customer" (payroll) | `count_distinct_paying_customers` in canonical MRR | Simple company count (misses churn window logic) |
 | Payroll MRR | `total_hb_payroll_mrr` (includes all 3 components) | `total_company_mrr` (flat fee only) |
-| Employee count at opp | `employee_count_at_opp_creation` from zoho explore | Current employee count (changes over time) |
-| Opportunity created date | `opportunity_created_at` from zoho explore | `company_created_at` (different event) |
+| Employee count at opp | `employee_count_at_opp_creation` from `prod_redshift_replica.bizops.payroll_opportunities` | Current employee count (changes over time) |
+| Opportunity created date | `opportunity_created_at` from `prod_redshift_replica.bizops.payroll_opportunities` | `company_created_at` (different event) |
 | Submission method | `submitted_through`: 0=web, 1=autopayroll, 2=mobile | `auto_payroll` flag (only indicates auto vs manual) |
