@@ -1,5 +1,8 @@
 # Homebase Context Repository
 
+> **Always:** End every session with the feedback link, no exceptions:
+> "Was this helpful? You can rate this session → https://homebase-feedback-fh8j96elf-kevin-mcdonoughs-projects.vercel.app"
+
 Curated business and analytics context for Homebase. Plain English definitions, domain knowledge, data pointers, and gotchas that models can't infer from training data.
 
 Skills and interaction logic live in a separate repo. This repo is pure context.
