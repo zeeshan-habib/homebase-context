@@ -9,7 +9,7 @@ This repo is **pure context** - plain English definitions, domain knowledge, dat
 ## What's in it
 
 - **Business context** - what Homebase is, product suite, OKRs, customer segments, product glossary
-- **Domain-specific knowledge** - product area context for HRM, scheduling, and more (managed by domain PMs)
+- **Domain-specific knowledge** - domain area context for HRM, scheduling, growth, marketing, and more (managed by domain leads)
 - **Gold standard metric definitions** - exact logic, disambiguation rules, owned by analytics
 - **Data environment guidance** - date conventions, table references, product-area schemas
 
@@ -21,7 +21,7 @@ Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self
 
 - `CLAUDE.md` - Top-level AI-facing instructions and folder directory (each subfolder also has its own `CLAUDE.md` with file-level guidance)
 - `global/` - Business overview, product suite, OKRs, customer segments, product glossary
-- `domains/` - Domain-specific product context (one subfolder per product area, starting with HRM)
+- `domains/` - Domain-specific context (one subfolder per function/product area)
 - `data/` - Metric definitions, analytics glossary, date conventions, product-area data schemas
 - `context-file-style-guide.md` - Authoring guidelines for new context files
 
@@ -29,13 +29,13 @@ Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self
 
 Analytics is the DRI for foundational truths about the business and its metrics. This covers both `global/` (cross-domain business context) and `data/` (metric definitions, data schemas). Anyone can open a PR to contribute - Analytics reviews and manages merges.
 
-Domain teams own their `domains/` subfolders. They control their product context (workflows, customer archetypes, data models). Analytics can help, advise on best practices, and hold people accountable if context goes stale or drifts from the source of truth.
+Domain teams own their `domains/` subfolders. They control their domain context (e.g. domain truths,  workflows, customer archetypes, data models). Analytics can help, advise on best practices, and hold people accountable if context goes stale or drifts from the source of truth.
 
 | Folder | DRI | Who can PR | Who reviews/merges |
 |---|---|---|---|
 | `global/` | Analytics | Anyone | Analytics |
 | `data/` | Analytics | Anyone | Analytics |
-| `domains/[area]/` | Domain PM | Anyone | Domain PM + Analytics |
+| `domains/[area]/` | Domain Owner | Anyone | Domain Owner + Analytics |
 
 ## Contributing
 
