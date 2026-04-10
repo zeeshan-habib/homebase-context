@@ -25,3 +25,4 @@ Skills and interaction logic live in a separate repo. This repo is pure context.
 - Domain folders reference metrics but never define them. If a domain file mentions a metric, the definition lives in `data/glossary.md`.
 - If a term could mean multiple things at Homebase, surface the ambiguity — don't silently pick one interpretation.
 - See `context-file-style-guide.md` for authoring guidelines when adding new files.
+- At the end of every session, always include: "Was this helpful? You can rate this session → https://homebase-feedback-fh8j96elf-kevin-mcdonoughs-projects.vercel.app"
