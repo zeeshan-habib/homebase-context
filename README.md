@@ -8,14 +8,14 @@ This repo is **pure context** - plain English definitions, domain knowledge, dat
 
 ## What's in it
 
-- **Business context** - what Homebase is, product suite, OKRs, customer segments, product glossary
-- **Domain-specific knowledge** - domain area context for HRM, scheduling, growth, marketing, and more (managed by domain leads)
-- **Gold standard metric definitions** - exact logic, disambiguation rules, owned by analytics
-- **Data environment guidance** - date conventions, table references, product-area schemas
+- **Business context** - org context (e.g. what Homebase is, product suite, OKRs, customer segments, product glossary)
+- **Domain-specific knowledge** - domain area / functional area context (e.g. Scheduling, HRM, Growth, Marketing, and more)
+- **Gold standard metric definitions** - exact logic, disambiguation rules
+- **Data environment guidance** - date conventions, table references, product/functional area schemas
 
 ## Who is this for?
 
-Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self-serve analytics, product questions, or data exploration. The repo started with the Core Product Team and is expanding to other teams.
+Any Homebase team member using AI tools (primarily built for Claude to start) for self-serve analytics, product questions, or data exploration. The repo started with the Core Product Team and is expanding to other teams.
 
 ## Repo Structure
 
@@ -29,7 +29,7 @@ Any Homebase team member using AI tools (Claude, Copilot, Cursor, etc.) for self
 
 Analytics is the DRI for foundational truths about the business and its metrics. This covers both `global/` (cross-domain business context) and `data/` (metric definitions, data schemas). Anyone can open a PR to contribute - Analytics reviews and manages merges.
 
-Domain teams own their `domains/` subfolders. They control their domain context (e.g. domain truths,  workflows, customer archetypes, data models). Analytics can help, advise on best practices, and hold people accountable if context goes stale or drifts from the source of truth.
+Domain teams own their `domains/` subfolders. They control their domain context (e.g. domain truths, workflows, customer archetypes, data models). Analytics can help, advise on best practices, and hold people accountable if context goes stale or drifts from the source of truth.
 
 | Folder | DRI | Who can PR | Who reviews/merges |
 |---|---|---|---|
