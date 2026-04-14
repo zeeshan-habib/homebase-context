@@ -50,12 +50,21 @@ Canonical index of all analytics-approved metric definitions at Homebase. For pr
 | Shift Notes Engaged | Active use of shift notes. 7d lookback. | `shift_notes_engaged_boolean` in `prod_redshift_replica.bizops.product_location_engagement_metrics` | [engagement-metrics.md](engagement/engagement-metrics.md) | Scheduling | Feature Engagement |
 | Department Management Engaged | Dept scheduling/permissions usage. 8d lookback. Plus+ with dept pageview OR dept permissions enabled with manager and scheduling engaged. | `department_management_engaged_boolean` in `prod_redshift_replica.bizops.product_location_engagement_metrics` | [engagement-metrics.md](engagement/engagement-metrics.md) | Scheduling | Feature Engagement |
 | Manager Log Engaged | 2+ manager log posts OR 20%+ of managers posted. 7d lookback. | `manager_log_engaged_boolean` in `prod_redshift_replica.bizops.product_location_engagement_metrics` | [engagement-metrics.md](engagement/engagement-metrics.md) | Scheduling | Feature Engagement |
-| CO ARR | Annualized revenue from Cash Out instant advance fees ($4.99 each). Primary FinServ revenue metric. | `prod_redshift_replica.public.cashout_advances.fee_in_dollars` | [cash-out/](product-areas/cash-out/) | Cash Out | Revenue |
-| Instant Advance Rate % | Percentage of Cash Out advances taken as instant (paid) vs. free. Typically ~95-97%. | | [cash-out/](product-areas/cash-out/) | Cash Out | Feature Engagement |
-| Avg. CO / User | Average Cash Out advances per active user in a period. Engagement/repeat usage measure. | | [cash-out/](product-areas/cash-out/) | Cash Out | Feature Engagement |
-| % Mobile Engagement (CO) | Percentage of the eligible employee base actively using the Homebase mobile app. | | [cash-out/](product-areas/cash-out/) | Cash Out | Feature Engagement |
-| Non-Repayment Rate / Loss Rate | Percentage of Cash Out advances not repaid by X days after due date. Tracked at D1, D7, D21, D28, D30, D120. | `prod_redshift_replica.public.cashout_advances` | [cash-out/](product-areas/cash-out/) | Cash Out | Risk |
-| Debit Return Rate | Rate at which ACH debit repayment attempts are returned by the bank. Typically ~45-50%. | | [cash-out/](product-areas/cash-out/) | Cash Out | Risk |
+| CO ARR | EOM forecast CO volumes x instant % (95.7%) x $4.99 x 12. Primary FinServ revenue metric. | `prod_redshift_replica.public.cashout_advances.fee_in_dollars` | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Revenue |
+| CO Users (MAU) | Unique users who took >=1 Cash Out in a given month. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Usage |
+| First-time CO User | User whose first-ever Cash Out occurred in that month. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Usage |
+| Returning CO User | User with prior CO history who took a Cash Out in that month. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Usage |
+| CO Activation Rate | % of new enrollees who take first CO within period. ~42%. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Activation |
+| Instant Advance Rate % | Percentage of Cash Out advances taken as instant (paid) vs. free. Typically ~95-97%. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Feature Engagement |
+| Avg. CO / User | Average Cash Out advances per active user in a period. Engagement/repeat usage measure. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Feature Engagement |
+| CO Eligible Base | Shift-active + mobile-active employees eligible for Cash Out. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Funnel |
+| CO Enrollment Completion Rate | % of users who started enrollment and completed it. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Funnel |
+| CO Eligibility Pass Rate | % of enrolled users who passed all eligibility rules. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Funnel |
+| CO Retention (MX) | % of users taking a Cash Out X months after their first CO. M6 ~12%. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Retention |
+| Active User Retention (MX) | % of CO users still MAU X months after first CO. M6 ~55%. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Retention |
+| % Mobile Engagement (CO) | Percentage of the eligible employee base actively using the Homebase mobile app. ~69%. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Feature Engagement |
+| Non-Repayment Rate / Loss Rate | Percentage of Cash Out advances not repaid by X days after due date. Tracked at D1, D7, D21, D28, D30, D120. Blended D120 ~2.0%. | `prod_redshift_replica.public.cashout_advances` | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Risk |
+| Debit Return Rate | Rate at which ACH debit repayment attempts are returned by the bank. Typically ~45-50%. | | [cash-out.md](product-areas/cash-out/cash-out.md) | Cash Out | Risk |
 | Payroll Opportunity (Opp) | A qualified lead for Homebase Payroll. Tracked through Early Life, Base, and Clover segments. | | | Payroll | Funnel |
 | Transfer Start | Payroll prospect that has initiated payroll setup/migration. | | | Payroll | Funnel |
 | Ran Payroll | Company that has run at least one payroll on Homebase. Primary Payroll activation event. | | | Payroll | Activation |
