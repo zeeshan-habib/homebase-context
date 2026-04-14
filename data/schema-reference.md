@@ -6,14 +6,14 @@ Core tables, join patterns, and column reference for Homebase data. For business
 
 ## Core Entity Tables
 
-| Table | Schema | Catalog | Grain | Description |
-|---|---|---|---|---|
-| `locations` | `public` | prod_redshift_replica | One row per location | Location master data (cleaned, deduplicated, fake/demo accounts removed) |
-| `companies` | `public` | prod_redshift_replica | One row per company | Company master data (cleaned, deduplicated, fake/demo accounts removed) |
-| `locations` | `postgres` | prod_redshift_replica | One row per location | Raw location data from production |
-| `jobs` | `postgres` | prod_redshift_replica | One row per job | Employee-location role assignments |
-| `active_paying_history_for_looker` | `dbt` | prod_redshift_replica | One row per location per date | Historical paying status snapshots |
-| `trial_periods` | `postgres` | prod_redshift_replica | One row per trial | Trial state, tier, dates |
+| Table | Grain | Description |
+|---|---|---|
+| `prod_redshift_replica.public.locations` | One row per location | Location master data (cleaned, deduplicated, fake/demo accounts removed) |
+| `prod_redshift_replica.public.companies` | One row per company | Company master data (cleaned, deduplicated, fake/demo accounts removed) |
+| `prod_redshift_replica.postgres.locations` | One row per location | Raw location data from production |
+| `prod_redshift_replica.postgres.jobs` | One row per job | Employee-location role assignments |
+| `prod_redshift_replica.dbt.active_paying_history_for_looker` | One row per location per date | Historical paying status snapshots |
+| `prod_redshift_replica.postgres.trial_periods` | One row per trial | Trial state, tier, dates |
 
 **When to use Location vs Company as unit of analysis:**
 - **Location** for most operational and product metrics — Team App is billed per location, engagement is measured per location, schedules and timecards live at the location level.

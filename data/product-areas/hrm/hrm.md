@@ -17,7 +17,7 @@ For product context, see `domains/hrm/`.
 | % of New Hires with NHP | Custom calc from `postgres.employee_onboarding_packets` + `postgres.jobs` | % of all new jobs at active companies that receive structured onboarding. Currently <10%. H1 2026 target: 25%. |
 | NHP Eligible Company Usage | Custom calc from `postgres.employee_onboarding_packets` | % of NHP-eligible companies that sent at least 1 packet in the month. Currently ~10–11%. |
 | % New Team Members with First Mobile Login | Custom calc from `postgres.jobs` | % of new team members at non-Clover locations who worked at least 1 shift and completed a first mobile login. |
-| 6-Month Revenue Retention | Revenue tables | Current revenue / revenue from 6 months ago for companies that were revenue-generating 6 months ago. Excludes Cash Out. HRM’s primary business outcome metric. |
+| 6-Month Revenue Retention | Revenue tables | Current revenue / revenue from 6 months ago for companies that were revenue-generating 6 months ago. Excludes Cash Out. HRM's primary business outcome metric. |
 | HR Pro Subscribed | Company subscription data | % of companies with an active HR Pro (Mineral) subscription. No in-product usage visibility currently exists. |
 
 ---
@@ -50,7 +50,7 @@ Source: `bizops.product_location_engagement_metrics`
 **Measures:** Use of Manager Log to capture performance signals and institutional knowledge.
 **Lookback:** 7 days
 **Threshold:** 2+ manager log posts OR 20%+ of managers have posted
-**Context:** Foundation for HRM’s H2 performance layer. Currently ~0.6% of active companies.
+**Context:** Foundation for HRM's H2 performance layer. Currently ~0.6% of active companies.
 
 | `manager_log_engaged_boolean` | `manager_log_engaged_boolean_30d_ago` |
 |---|---|
@@ -74,16 +74,16 @@ Source: `bizops.product_location_engagement_metrics`
 
 ## Key Tables
 
-| Table | Schema | Catalog | What it’s for | Join key |
-|---|---|---|---|---|
-| `product_company_engagement_metrics` | `bizops` | prod_redshift_replica | HR Docs and Messaging engagement booleans (company-level) | `company_id` |
-| `product_location_engagement_metrics` | `bizops` | prod_redshift_replica | Time Offs, Manager Log, Departments engagement booleans | `location_id` |
-| `employee_onboarding_packets` | `postgres` | prod_redshift_replica | NHP records — sent, started, completed states and timestamps | `id` |
-| `time_off_requests` | `postgres` | prod_redshift_replica | Time-off requests and approvals | `id` |
-| `documents` | `postgres` | prod_redshift_replica | Compliance and custom documents attached to team members | `id` |
-| `jobs` | `postgres` | prod_redshift_replica | Employee-location relationships; role, pay rate, level | `location_id` |
-| `locations` | `public` | prod_redshift_replica | Location attributes | `location_id` |
-| `companies` | `public` | prod_redshift_replica | Company attributes | `company_id` |
+| Table | What it's for | Join key |
+|---|---|---|
+| `prod_redshift_replica.bizops.product_company_engagement_metrics` | HR Docs and Messaging engagement booleans (company-level) | `company_id` |
+| `prod_redshift_replica.bizops.product_location_engagement_metrics` | Time Offs, Manager Log, Departments engagement booleans | `location_id` |
+| `prod_redshift_replica.postgres.employee_onboarding_packets` | NHP records — sent, started, completed states and timestamps | `id` |
+| `prod_redshift_replica.postgres.time_offs` | Time-off requests and approvals | `id` |
+| `prod_redshift_replica.postgres.employee_onboarding_packets` | Compliance and custom documents attached to team members | `id` |
+| `prod_redshift_replica.postgres.jobs` | Employee-location relationships; role, pay rate, level | `location_id` |
+| `prod_redshift_replica.public.locations` | Location attributes | `location_id` |
+| `prod_redshift_replica.public.companies` | Company attributes | `company_id` |
 
 ---
 
@@ -93,7 +93,7 @@ Source: `bizops.product_location_engagement_metrics`
 |---|---|---|
 | HR Docs engagement | `hrdocs_engaged_boolean = 1` in `bizops.product_company_engagement_metrics` | Location-level booleans (HR Docs is company-scoped) |
 | NHP completion rate | Custom query on `postgres.employee_onboarding_packets` | `hrdocs_engaged_boolean` (different threshold and definition) |
-| “Active” in HRM context | `engagement_boolean = 1` in `bizops.product_location_engagement_metrics` | `active_now`, `is_active` flags |
+| "Active" in HRM context | `engagement_boolean = 1` in `bizops.product_location_engagement_metrics` | `active_now`, `is_active` flags |
 | NHP grain | Team Member (user + company) | Job (user + location) |
 | Time Offs / Manager Log engagement | Location-level booleans in `product_location_engagement_metrics` | Company-level table (these features are location-scoped) |
 

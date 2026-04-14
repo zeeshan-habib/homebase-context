@@ -74,17 +74,17 @@ A submitted but unresolved request does NOT count.
 
 ## Key Tables
 
-| Table | Schema | What it's for | Join key |
-|---|---|---|---|
-| `timecards` | `bizops` | Core timecard data | `timecard_id` |
-| `timecard_clockouts` | `bizops` | Clock-out details, method, manager edits | `timecard_id` |
-| `timebreaks_enriched_with_edits` | `bizops` | Break details with edit flags | `timecard_id` |
-| `time_tracking_timecard_change_requests` | `postgres` | ACO/ACI requests | `timecard_uuid` |
-| `locations` | `public` | Location attributes | `location_id` |
-| `companies` | `public` | Company attributes | `company_id` |
-| `location_properties` | `postgres` | Location settings | `location_id` |
-| `timesheets_settings` | `postgres` | TT-specific settings | `location_id` |
-| `product_location_engagement_metrics` | `bizops` | Engagement booleans | `location_id` |
+| Table | What it's for | Join key |
+|---|---|---|
+| `prod_redshift_replica.bizops.timecards` | Core timecard data | `timecard_id` |
+| `prod_redshift_replica.bizops.timecard_clockouts` | Clock-out details, method, manager edits | `timecard_id` |
+| `prod_redshift_replica.bizops.timebreaks_parsed` | Break details with edit flags | `timecard_id` |
+| `prod_redshift_replica.postgres.time_tracking_timecard_change_requests` | ACO/ACI requests | `timecard_uuid` |
+| `prod_redshift_replica.public.locations` | Location attributes | `location_id` |
+| `prod_redshift_replica.public.companies` | Company attributes | `company_id` |
+| `prod_redshift_replica.postgres.location_properties` | Location settings | `location_id` |
+| `prod_redshift_replica.postgres.timesheets_settings` | TT-specific settings | `location_id` |
+| `prod_redshift_replica.bizops.product_location_engagement_metrics` | Engagement booleans | `location_id` |
 
 ---
 

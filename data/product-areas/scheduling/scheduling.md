@@ -52,14 +52,14 @@
 
 ## Key Tables
 
-| Table | Schema | Grain | Purpose |
-|-------|--------|-------|---------|
-| `shifts` | `postgres` | per shift | Raw shifts, all statuses including drafts and deleted |
-| `product_scheduling_usage_metrics` | `bizops` | location + date | Pre-aggregated scheduling metrics, published shifts only, 7d rolling window |
-| `publish_schedule_events` | `firehose` | per publish event | When and how schedules were published (web, mobile, etc.) |
-| `shift_change_events` | `firehose` | per edit event | Edit stream for shifts (available from 2024-04-01 onward only) |
-| `shift_notes` | `postgres` | per note | Notes attached to shifts |
-| `trades` | `postgres` | per trade | Shift swap/trade requests between employees |
+| Table | Grain | Purpose |
+|-------|-------|-------|
+| `prod_redshift_replica.postgres.shifts` | per shift | Raw shifts, all statuses including drafts and deleted |
+| `prod_redshift_replica.bizops.product_scheduling_usage_metrics` | location + date | Pre-aggregated scheduling metrics, published shifts only, 7d rolling window |
+| `prod_redshift_replica.firehose.publish_schedule_events` | per publish event | When and how schedules were published (web, mobile, etc.) |
+| `prod_redshift_replica.firehose.shift_change_events` | per edit event | Edit stream for shifts (available from 2024-04-01 onward only) |
+| `prod_redshift_replica.postgres.shift_notes` | per note | Notes attached to shifts |
+| `prod_redshift_replica.postgres.trades` | per trade | Shift swap/trade requests between employees |
 
 ---
 
@@ -79,11 +79,11 @@
 
 ## Location Properties & Settings for Segmentation and Filtering
 
-| Table | Schema | Description |
-|-------|--------|-------------|
-| `locations` | `public` | Location attributes and properties | Join on `location_id` |
-| `companies` | `public` | Company attributes and properties | Join on `company_id` |
-| `location_properties` | `postgres` | Location settings and preferences | Join on `location_id` |
+| Table | Description | Join key |
+|-------|-------------|----------|
+| `prod_redshift_replica.public.locations` | Location attributes and properties | `location_id` |
+| `prod_redshift_replica.public.companies` | Company attributes and properties | `company_id` |
+| `prod_redshift_replica.postgres.location_properties` | Location settings and preferences | `location_id` |
 
 ---
 

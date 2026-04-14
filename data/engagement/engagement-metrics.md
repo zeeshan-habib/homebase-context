@@ -8,10 +8,10 @@ This document provides additional guidance on querying engagement metrics.  Refe
 
 ## Primary Tables
 
-| Table | Schema | Catalog | Grain | Description |
-|-------|--------|---------|-------|-------------|
-| `product_location_engagement_metrics` | `bizops` | prod_redshift_replica | One row per location per date | Location-level engagement booleans |
-| `product_company_engagement_metrics` | `bizops` | prod_redshift_replica | One row per company per date | Company-level engagement booleans |
+| Table | Grain | Description |
+|-------|-------|-------------|
+| `prod_redshift_replica.bizops.product_location_engagement_metrics` | One row per location per date | Location-level engagement booleans |
+| `prod_redshift_replica.bizops.product_company_engagement_metrics` | One row per company per date | Company-level engagement booleans |
 
 ### Join Pattern
 
