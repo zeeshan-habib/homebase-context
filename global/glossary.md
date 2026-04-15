@@ -83,7 +83,7 @@ Load when encountering an unfamiliar Homebase product term. For metric definitio
 
 | Term | Meaning |
 |---|---|
-| Clover Embedded | Homebase timesheets embedded in Clover POS app |
+| Clover Embedded | Homebase timesheets embedded in Clover's Dashboard |
 | Front Book | New Clover merchants signed up after embedded distribution agreement |
 | Back Book | Existing Clover merchants retroactively made eligible for embedded |
 | Activation-Ready | Clover segment: merchants active on Homebase but not yet embedded-activated. Highest-probability conversion pool. |
