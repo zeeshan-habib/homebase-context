@@ -2,6 +2,68 @@
 
 Tables, joins, dashboards, pacing methodology, and data gotchas for Cash Out metrics. For metric definitions, see `data/glossary.md`.
 
+## Key Joins
+
+| Left Table | Right Table | Join Key | Use Case |
+|---|---|---|---|
+| `prod_redshift_replica.public.cashout_advances` | `prod_redshift_replica.postgres.shift_pay_eligibilities` | `user_id` | Activation rate, enrollment-to-advance conversion |
+| `prod_redshift_replica.public.cashout_advances` | `prod_redshift_replica.firehose.shift_pay_advance_events` | `advance_id` | Location, risk score, returning_limit_rank per advance |
+| `prod_redshift_replica.public.fact_users_by_day` | `prod_redshift_replica.ext_firehose.shift_pay_user_state_events` | `user_id` + `date` | Retention metrics requiring `user_state` (not native to `fact_users_by_day`) |
+| `prod_redshift_replica.postgres.shift_pay_paybacks` | `prod_redshift_replica.postgres.shift_pay_transaction_events` | `transaction_id = synapse_transaction_id` | Debit return rate, NSF return rate |
+| `prod_redshift_replica.postgres.shifts` | `prod_redshift_replica.postgres.jobs` | `owner_id = jobs.id` where `owner_type = 'Job'` | Shift-active user counts for mobile engagement |
+
+## Metric Computation Details
+
+Detailed query logic and usage guidance for CO metrics defined in `data/glossary.md`.
+
+### First-time vs Returning CO User
+
+Two approaches to classify:
+1. **Advance-level:** Compute `first_payback_date` as `MIN(payback_date)` per `user_id` (not a raw column in `cashout_advances`). New = `payback_date = first_payback_date`. Returning = `payback_date <> first_payback_date`. Use for volume reporting and loss rate segmentation by new/returning.
+2. **Point-in-time:** Use `fact_users_by_day.cashed_out_before` (`false` = first-time, `true` = returning). Best when you need user status on a given date rather than per-advance classification.
+
+### CO Activation Rate
+
+Numerator: distinct `user_id` with at least one `status = 'SETTLED'` advance in `cashout_advances`. Denominator: distinct `user_id` with enrollment in `shift_pay_eligibilities` (`triggered_by = 'enrollment'`). Measures enrollment-to-usage conversion.
+
+### CO Enrollment Completion Rate
+
+Numerator: distinct `user_id` reaching `user_state IN ('B', 'B2')` in `shift_pay_user_state_events`. Denominator: distinct `user_id` with any enrollment-triggered event.
+
+### CO Eligibility Pass Rate
+
+`COUNT(DISTINCT CASE WHEN eligible = true THEN user_id END) / COUNT(DISTINCT user_id)` in `shift_pay_eligibilities` where `triggered_by = 'enrollment'` and `rules_version_number = 5`.
+
+### Retention Metrics
+
+All four retention metrics are cohorted by `first_cash_out_date` month in `fact_users_by_day`. Month X = `DATEDIFF('month', DATE_TRUNC('month', first_cash_out_date), DATE_TRUNC('month', date)) = X`.
+
+| Metric | Numerator | Denominator | When to use |
+|---|---|---|---|
+| CO Retention (MX) | `cashed_out_this_month = true` | Total cohort users | Are users continuing to take advances? |
+| Active User Retention (MX) | `is_mau = true` | Total cohort users | Are users still on the platform? High Active + low CO Retention = behavioral drop-off, not platform churn. |
+| Eligible User Retention (MX) | `user_state IN ('B', 'B2')` (requires join to `shift_pay_user_state_events`) | Active users (`is_mau = true`) | Is drop-off due to lost eligibility (bank issues, employment changes) or behavioral choice? |
+| % Active+Eligible with CO (MX) | `cashed_out_this_month = true` | Active + eligible users (`user_state IN ('B', 'B2') AND is_mau = true`) | Of those who *could* take a CO, how many *do*? Sizes the re-engagement opportunity. |
+
+Note: `user_state` is not a native column in `fact_users_by_day` — requires joining to `ext_firehose.shift_pay_user_state_events` on `user_id` + `date`.
+
+### % Mobile Engagement (CO)
+
+Shift active: distinct `user_id` with `shifts > 0` per month from `postgres.shifts` (join to `postgres.jobs` on `owner_id = jobs.id` where `owner_type = 'Job'`). Mobile active: distinct `user_id` with `days_using_the_app > 1` per month from `dbt.fin_ux_events_agg`. Rate = mobile active / shift active.
+
+### Non-Repayment Rate / Loss Rate
+
+Also referred to interchangeably as default rate. Tracked at DX windows: D1, D7, D21, D28, D30, D120. Use D30 for early warning; D120 for final loss rate.
+
+Formula: `1 - COUNT(CASE WHEN paid_back = 1 AND DATEDIFF('day', payback_date, paid_back_date) <= X THEN 1 END) / COUNT(*)` on settled advances. Only include advances where `DATEDIFF('day', payback_date, GETDATE()) > X` (matured past the window).
+
+### Debit Return Rate & NSF Return Rate
+
+Both use `postgres.shift_pay_paybacks` where `delivery_method = 'debit'`.
+
+- **Debit Return Rate:** `COUNT(DISTINCT CASE WHEN status = 'RETURNED' THEN id END) / COUNT(DISTINCT id)`. Captures all bank-side payment failures.
+- **NSF Return Rate:** Join to `postgres.shift_pay_transaction_events` on `transaction_id = synapse_transaction_id`. `COUNT(DISTINCT CASE WHEN note LIKE '%20051%' THEN id END) / COUNT(DISTINCT id)`. Isolates insufficient-funds failures (ACH return code R51) from other return reasons.
+
 ## P&L Structure
 
 | Line | Definition |
