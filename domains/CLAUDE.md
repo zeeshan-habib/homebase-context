@@ -10,6 +10,7 @@ Domain-specific product context. Each subfolder covers one product area — how 
 | Time Tracking | `time-tracking/` | Timecards, clock-in/out, breaks, payroll assistants (ACO/ACI) |
 | Payroll | `payroll/` | Payroll processing, funnel (opp → ran payroll), Check integration, pay frequency, promos |
 | Hiring Assistant | `hiring-assistant/` | Job posting, application funnel, trial conversion, subscriptions, ICP |
+| Clover Embedded | `clover-embedded/` | Clover partnership, buy rate, rev share list, frontbook/backbook, active merchant |
 
 ## Navigation Rules
 

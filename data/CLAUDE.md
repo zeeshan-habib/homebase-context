@@ -20,6 +20,7 @@ Metric definitions, schema reference, and product-area data guides.
 | `product-areas/hiring-assistant/` | Hiring-specific data context — job posts, application funnel, subscriptions, MRR |
 | `product-areas/hrm/` | HRM data — NHP funnel gotchas, onboarding metrics, HR Docs engagement caveats |
 | `product-areas/payroll/` | Payroll data — key tables, MRR components, cohort definitions, join gotchas, churn groupings |
+| `product-areas/clover-embedded/` | Clover Embedded data — buy rate, rev share list, frontbook/backbook, activation funnel, plan caveats |
 
 ## Navigation Rules
 
