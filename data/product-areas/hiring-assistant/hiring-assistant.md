@@ -34,9 +34,8 @@ trial conversion, subscription/MRR reporting, or hiring attribution.
 
 ### Healthy Job
 - **Measures**: A job with sufficient applicant volume and quality
-- **⚠️ Two different thresholds — do not conflate:**
-  - **`healthy_job` column** in `business_users.hiring.jobs_with_metadata`: precomputed flag using `>= 15 applicants AND >= 3 top matches` (lifetime counts, no time window). Use `WHERE healthy_job = 1` to filter.
-  - **`% Jobs Healthy by Day 5` metric** (tracked in WBR): computed directly as `>= 20 applications AND >= 5 top matches by Day 5`. Use `business_users.hiring.job_post_history_by_day WHERE job_age_days = 5` — do NOT use the `healthy_job` column for this metric.
+- **`healthy_job` column** in `business_users.hiring.jobs_with_metadata`: precomputed flag using `>= 20 applicants AND >= 5 top matches` (lifetime counts, no time window). Use `WHERE healthy_job = 1` to filter.
+- **`% Jobs Healthy by Day 5` metric** (tracked in WBR): same 20/5 threshold but evaluated at Day 5. Use `business_users.hiring.job_post_history_by_day WHERE job_age_days = 5` and compute inline — or use `healthy_job = 1` on jobs that were active at day 5.
 
 ### Top Match
 - **Measures**: Applicants who passed the screener and meet job criteria per ML scoring
