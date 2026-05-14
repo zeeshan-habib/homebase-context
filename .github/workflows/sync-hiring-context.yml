@@ -6,9 +6,10 @@ name: Sync hiring-assistant context to Nelly memory
 # successfully, every new Nelly session sees the updated content without
 # any redeploy of the app itself.
 #
-# Currently MANUAL ONLY (workflow_dispatch). After we verify one manual run
-# succeeds end-to-end, a tiny follow-up PR will uncomment the `push` trigger
-# below to make this auto-fire on every commit that touches the source file.
+# Auto-fires on push to main when the source file changes, plus a manual
+# trigger for ad-hoc resyncs. Initial verification run completed
+# successfully on 2026-05-14 (manual workflow_dispatch); enabling auto-sync
+# now.
 #
 # See managed-agent/docs/memory-store-migration.md in pioneerworks/Nelly
 # for the full design rationale.
@@ -20,11 +21,10 @@ on:
         description: 'Why this manual sync (for the audit trail in workflow logs)'
         required: false
         default: 'manual sync'
-  # TODO(post-verification): uncomment to enable auto-sync on push.
-  # push:
-  #   branches: [main]
-  #   paths:
-  #     - 'data/product-areas/hiring-assistant/hiring-assistant.md'
+  push:
+    branches: [main]
+    paths:
+      - 'data/product-areas/hiring-assistant/hiring-assistant.md'
 
 jobs:
   sync:
