@@ -1,0 +1,71 @@
+name: Sync hiring-assistant context to Nelly memory
+
+# Pushes the latest data/product-areas/hiring-assistant/hiring-assistant.md
+# into Nelly's Anthropic memory store. Nelly reads this content at session
+# time, so this workflow is the canonical "publish" step — once it runs
+# successfully, every new Nelly session sees the updated content without
+# any redeploy of the app itself.
+#
+# Currently MANUAL ONLY (workflow_dispatch). After we verify one manual run
+# succeeds end-to-end, a tiny follow-up PR will uncomment the `push` trigger
+# below to make this auto-fire on every commit that touches the source file.
+#
+# See managed-agent/docs/memory-store-migration.md in pioneerworks/Nelly
+# for the full design rationale.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this manual sync (for the audit trail in workflow logs)'
+        required: false
+        default: 'manual sync'
+  # TODO(post-verification): uncomment to enable auto-sync on push.
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - 'data/product-areas/hiring-assistant/hiring-assistant.md'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PATCH Nelly memory store
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MEMORY_STORE_ID: ${{ secrets.NELLY_MEMORY_STORE_ID }}
+          MEMORY_ID: ${{ secrets.NELLY_HIRING_ASSISTANT_MEMORY_ID }}
+          SOURCE_FILE: data/product-areas/hiring-assistant/hiring-assistant.md
+          REASON: ${{ inputs.reason }}
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SOURCE_FILE" ]; then
+            echo "::error::Source file not found: $SOURCE_FILE"
+            exit 1
+          fi
+          chars=$(wc -c < "$SOURCE_FILE")
+          echo "Reason: ${REASON:-(none)}"
+          echo "Source: $SOURCE_FILE ($chars chars)"
+          echo "Target: store=$MEMORY_STORE_ID memory=$MEMORY_ID"
+          # JSON-encode the file content via jq so newlines/quotes don't break the payload.
+          content=$(jq -Rs . < "$SOURCE_FILE")
+          payload="{\"content\": $content}"
+          http_code=$(curl -sS -o /tmp/resp.json -w "%{http_code}" \
+            -X POST "https://api.anthropic.com/v1/memory_stores/$MEMORY_STORE_ID/memories/$MEMORY_ID" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "anthropic-beta: managed-agents-2026-04-01" \
+            -H "content-type: application/json" \
+            -d "$payload")
+          echo "HTTP $http_code"
+          echo "--- response body ---"
+          cat /tmp/resp.json
+          echo
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "::error::Memory PATCH failed with HTTP $http_code"
+            exit 1
+          fi
+          version_id=$(jq -r '.latest_version_id // .id // ""' /tmp/resp.json)
+          echo "::notice::Synced $chars chars to Nelly memory; new version=$version_id"
