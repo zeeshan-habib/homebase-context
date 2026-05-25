@@ -72,8 +72,8 @@ Confirm the time grain before building any calculation.
 | Labor metrics calculation | Raw counts or simple % change | 7-day rolling average of indexed daily values |
 | Index baseline | None (use raw or YoY % change) | January of the current year = 0; all months expressed relative to it |
 | MoM change | `(current_week − prior_week) / prior_week` | `current_month_7day_avg − prior_month_7day_avg` (both already indexed; result is percentage-point change) |
-| Wages | Payroll cohort query, monthly grain | Same cohort query; denominator anchored to Jan 2022 ($11.4829) |
-| Hiring/turnover | `timeseries_data / ss` → MoM % change | Same normalization; then indexed to January of each year |
+| Wages | Payroll cohort query (`../mshr.md → ## Example Queries → ### Payroll Cohort`), scoped to requested window | Same cohort queries; denominator anchored to Jan 2022 ($11.4829) for % change framing |
+| Hiring/turnover | `### Hiring` / `### Turnover` queries from `../mshr.md`; `timeseries_data / ss` → MoM % change (`ss` = `COUNT(DISTINCT location_id)` from `location_info`) | Same normalization; then indexed to January of each year |
 | Primary table | `dbt.new_data_weekly` | `corona.shift_and_timecard_events` + `postgres.jobs` |
 
 ## Production Steps
@@ -90,14 +90,16 @@ Before pulling any data, confirm with the requester:
 
 **Step 2 — Select the right table**
 
+> **Wages are always payroll cohort — no exceptions.** Whether the request is ad hoc or monthly, national or by industry, always use the `### Payroll Cohort` queries in `../mshr.md → ## Example Queries`. The `dbt` tables (`dbt.new_data_weekly`, `dbt.temp_timeclock_data`) cover labor activity metrics only — they do not contain wage data.
+
 | If the request needs... | Use this table |
 |---|---|
 | National weekly time series | `dbt.new_data_weekly` |
 | State-level weekly time series | `dbt.new_state_data_weekly` |
 | Custom segmentation (engagement, size band) | `dbt.temp_timeclock_data` (filter directly) |
 | City or MSA level | `dbt.temp_timeclock_data` filtered to `city` or `msa` — no pre-aggregate exists |
-| Wages | Run payroll cohort query scoped to the requested window |
-| Hiring / turnover | Run hiring/turnover queries scoped to the requested window |
+| Wages (any cut: national, industry, state, MSA) | **Always** use the `### Payroll Cohort` queries from `../mshr.md → ## Example Queries`. Run the Setup section first. Do NOT use `dbt.temp_timeclock_data` or any pre-aggregated table for wages — those tables do not contain wage data. Scope the cohort variables to the requested window. |
+| Hiring / turnover | Use `### Hiring` and `### Turnover` queries from `../mshr.md → ## Example Queries`. Run the Setup section first (`consideration_set`, `location_info` temp views). `ss` = `COUNT(DISTINCT location_id)` from `location_info`; normalize as `timeseries_data / ss` before comparing periods. |
 
 Apply the relevant qualification flags from `../mshr.md`:
 - `qualified_for_jobs` (5–100 employees, ≥12 weeks active) for jobs added/archived
