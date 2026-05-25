@@ -162,3 +162,50 @@ SELECT * FROM aggregated ORDER BY week_start, broad_industry;
 ```
 
 Adapt the SELECT list, flag, and GROUP BY dimensions to the specific request. This structure is the default starting point for all ad hoc queries.
+
+---
+
+### Normalization Rules — Always Apply for Ad Hoc Reports
+
+> **Never report raw aggregate totals as headline metrics in ad hoc reports.** Raw counts conflate platform growth (more locations joining Homebase over time) with real economic signal. Normalized per-location metrics are comparable across time and geography.
+
+**Apply these normalizations automatically to every ad hoc query:**
+
+| Metric | Headline form | Formula | Denominator |
+|---|---|---|---|
+| Employees Working | `employees_per_location` | `COUNT(DISTINCT user_id WHERE qualified_for_hours=1 AND has_clock_in=1) / active_qualified_locs` | `COUNT(DISTINCT location_id WHERE qualified_for_hours = 1)` |
+| Hours Worked | `hours_per_location` | `SUM(hours_worked WHERE qualified_for_hours=1) / active_qualified_locs` | Same — `qualified_for_hours` locations |
+| Jobs Added | `hires_per_location` | `COUNT(jobs_added WHERE qualified_for_jobs=1) / active_qualified_locs` | `COUNT(DISTINCT location_id WHERE qualified_for_jobs = 1)` |
+| Jobs Archived | `separations_per_location` | `COUNT(jobs_archived WHERE qualified_for_jobs=1) / active_qualified_locs` | Same — `qualified_for_jobs` locations |
+| Users Added | `new_employees_per_location` | `COUNT(DISTINCT user_id WHERE qualified_for_turnover=1) / active_qualified_locs` | `COUNT(DISTINCT location_id WHERE qualified_for_turnover = 1)` |
+| Wages | No change | Already expressed as $/hr — inherently normalized | — |
+| Businesses Open | **Exception — raw count** | Raw count + YoY % change as the normalization proxy | Cannot normalize per-location |
+
+**Two rules that override any deviation:**
+
+1. **The denominator must match the metric's qualification flag.** `qualified_for_hours` locations for employees/hours; `qualified_for_jobs` locations for hiring/turnover. Never use a generic "active location" count across different metrics — the denominators will differ and mixing them produces misleading ratios.
+
+2. **Raw totals are context, not headlines.** Always compute and return the raw totals (employees_working, hours_worked, etc.) alongside the normalized figures so the reader can sanity-check — but label them clearly as supporting data, not the primary metric.
+
+**For Businesses Open specifically:** express as raw count and YoY % change side by side. The % change is the normalization proxy — it removes the absolute platform-size effect without requiring a denominator.
+
+```sql
+-- Normalization pattern — embed in every ad hoc query
+COUNT(DISTINCT CASE WHEN qualified_for_hours = 1 THEN location_id END)
+    AS active_qualified_locs,
+
+COUNT(DISTINCT CASE WHEN qualified_for_hours = 1 AND has_clock_in = 1 THEN user_id END)
+    AS employees_working_raw,
+
+ROUND(
+    COUNT(DISTINCT CASE WHEN qualified_for_hours = 1 AND has_clock_in = 1 THEN user_id END)
+    / NULLIF(COUNT(DISTINCT CASE WHEN qualified_for_hours = 1 THEN location_id END), 0),
+    2
+) AS employees_per_location,   -- ← headline metric
+
+ROUND(
+    SUM(CASE WHEN qualified_for_hours = 1 THEN COALESCE(hours_worked, 0) ELSE 0 END)
+    / NULLIF(COUNT(DISTINCT CASE WHEN qualified_for_hours = 1 THEN location_id END), 0),
+    2
+) AS hours_per_location        -- ← headline metric
+```
