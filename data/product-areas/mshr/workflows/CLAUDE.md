@@ -33,6 +33,7 @@ Read in this order:
 | `indexed_values_query.sql` | Direct Databricks query for Employees Working, Hours Worked, Businesses Open — indexed values for 2024/2025/2026 with MoM ppt changes |
 | `create_new_data_weekly.sql` | Full CREATE TABLE SQL for `dbt.new_data_weekly` — reference for understanding the ad hoc pipeline |
 | `industry-classification.sql` | NAICS code → `business_type_new` mapping reference. Full CASE WHEN block for ad hoc queries + canonical list of all 13 broad industry classifications and their sub-categories |
+| `event-impact-template.py` | Generic event impact framework (Databricks PySpark). Edit CONFIG block only — works for any event type: sporting events, natural disasters, policy changes, economic shocks. Seasonality-adjusted YoY delta + stat sig. FIFA World Cup 2026 / Miami FL is the built-in example. |
 
 ## Which Workflow to Use
 
@@ -40,6 +41,7 @@ Read in this order:
 - Leadership- or GTM-driven, scoped to a specific question or event → `adhoc-report.md`
 - Question about which tables to use, data freshness, or `dbt.new_data_weekly` schema → `data-sourcing.md`
 - Need to regenerate the January benchmark table → `create_benchmark_table.sql` + `data-sourcing.md → Recreating the Benchmark Table`
+- Request involves an event (sporting event, hurricane, heatwave, policy announcement, etc.) → `event-impact-template.py` — edit the CONFIG block and run
 
 ---
 
@@ -55,6 +57,7 @@ Read in this order:
 | A specific segment, state, city, industry, custom time window, event-driven cut, or "ad hoc" | Ad Hoc |
 | Wages — any cut, any cadence | Always payroll cohort regardless of track |
 | Hiring or turnover — any cut | Always `### Hiring` / `### Turnover` queries from `../mshr.md` regardless of track |
+| An event impact (sporting event, disaster, policy, etc.) | Event Impact — invoke `event-impact-template.py`, edit CONFIG block |
 
 ---
 
@@ -96,6 +99,31 @@ Use when the request specifies a custom segment (state, city, MSA, industry, siz
 
 6. Industry segmentation: use the `industry-classification.sql` CASE WHEN block when `public.locations` is not joinable; otherwise use `loc.business_type_new`
 7. Output: Databricks-ready SQL. Use Python (PySpark or `%sql` blocks) when the query has multiple dependent steps, date arithmetic, or looping across periods
+
+#### City / Geographic String Handling
+
+City values in `dbt.temp_timeclock_data` are mixed case (`'Miami'`, `'MIAMI'`, `'miami'` all appear). MSA values have similar variance. **Always:**
+
+1. **Run the city discovery query first** to confirm exact string variants before filtering:
+```sql
+SELECT UPPER(city) AS city_upper, state, COUNT(DISTINCT location_id) AS locs
+FROM dbt.temp_timeclock_data
+WHERE state = '[STATE]' AND city ILIKE '%[cityname]%'
+  AND event_date >= DATE_SUB(CURRENT_DATE, 90)
+  AND loc_archived_at IS NULL
+GROUP BY 1, 2 ORDER BY 3 DESC
+```
+2. Filter using `UPPER(city) = 'CITYNAME'` (not raw `city = 'Miami'`) to catch all variants
+3. Always pair city with `state =` to exclude cross-state collisions (e.g., Miami FL vs Miami OH, Portland OR vs Portland ME)
+
+#### Qualification Flag Scope Relaxation
+
+The standard qualification flags are calibrated for national-scale analysis. For narrow geographic or industry cuts, samples can become thin:
+
+- **Check sample size after applying flags:** if `COUNT(DISTINCT location_id WHERE flag=1) < 30`, flag the output as a thin sample
+- **For small city or narrow industry cuts** (< 30 qualified locations with standard flags): relax to **5–200 employee band, ≥ 8 weeks active** and note the relaxation in the output
+- **Always surface `active_qualified_locs`** as a column in the output — it lets the reader assess reliability without needing to re-run the query
+- **Do not silently over-filter:** if the standard flag returns < 5 locations, the segment is too narrow for publishable output — flag it explicitly and consider rolling up to a broader geography or industry
 
 ---
 
