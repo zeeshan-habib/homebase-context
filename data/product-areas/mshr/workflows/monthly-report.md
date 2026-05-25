@@ -36,14 +36,19 @@ Paste daily indexed values into the corresponding D-sheets in `Main Street Healt
 
 **Step 3 — Python script runs (wages, hiring, turnover)**
 
-Run the payroll cohort wage script:
-- Set `cohort_month_end` / `cohort_year_end` = reporting month
-- Set `cohort_month_start` / `cohort_year_start` = same month one year prior
-- Paste `period_end`, `wage_rate`, `sample_size_jobs` into D-Wage+Labour_cost (national section, then by-industry section)
+All three scripts use the queries defined in `../mshr.md → ## Example Queries`. Run the **Setup** section first (Python date calculation + `month_end_dates`, `consideration_set`, `location_info` temp views) before running any of the queries below.
 
-Run the hiring script → paste `period_end`, `ss`, `timeseries_data` into D-Hiring+Turnover (HIRING section).
+**Wages — national:**
+Use `### Payroll Cohort Average by Job (National)`. Set cohort variables to: `cohort_month/year_end` = reporting month, `cohort_month/year_start` = same month one year prior. Paste `period_end`, `wage_rate`, `sample_size_jobs` into D-Wage+Labour_cost (national section).
 
-Run the turnover script → paste into D-Hiring+Turnover (TURNOVER section).
+**Wages — by industry:**
+Use `### Payroll Cohort Average by Job by Industry`. Same cohort variables. Paste `period_end`, `business_type`, `wage_rate`, `sample_size_jobs` into D-Wage+Labour_cost (by-industry section).
+
+**Hiring:**
+Use `### Hiring`. Paste `period_end`, `ss`, `timeseries_data` into D-Hiring+Turnover (HIRING section). `ss` = `COUNT(DISTINCT location_id)` from `location_info` — the per-location sample size used as the normalization denominator.
+
+**Turnover:**
+Use `### Turnover`. Paste `period_end`, `ss`, `timeseries_data` into D-Hiring+Turnover (TURNOVER section). Same `ss` definition as hiring.
 
 **Step 4 — Excel auto-calculation**
 
@@ -68,7 +73,7 @@ Save final PPTX. Log it in the Cover sheet of the master Excel file with the pub
 
 ## Data Requirements
 
-IF running this workflow → load `data-model.md` and `../mshr.md` for table names and query patterns.
+IF running this workflow → load `../mshr.md`. Use `## Example Queries` for all wage, hiring, and turnover data pulls. Do not use `dbt` tables or any other source for these metrics.
 
 ## QA Checklist
 
