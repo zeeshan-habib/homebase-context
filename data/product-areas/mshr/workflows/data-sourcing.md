@@ -1,6 +1,6 @@
 ---
 owner: vlad
-last_updated: 2026-05-24
+last_updated: 2026-05-25
 review_cadence: monthly
 next_review: 2026-06-24
 source: internal
@@ -35,7 +35,7 @@ For full column definitions and SQL patterns, see `../mshr.md`.
 
 | Table | Description | Refresh cadence | Notes |
 |---|---|---|---|
-| `dbt.temp_timeclock_data` | DBT-built enriched timeclock staging table. Richer than corona: includes engagement flags (`bizops.product_location_engagement_metrics`), size bands (`public.fact_locations_by_day`), county codes. | DBT refresh | Use for ad hoc custom segmentation only. Never cite this table for monthly MSHR outputs. |
+| `dbt.temp_timeclock_data` | DBT-built enriched timeclock staging table. Richer than corona: includes engagement flags, size bands, county codes. Grain: one row per shift event per employee per location. Full schema documented in the section below. | DBT refresh | Use for ad hoc custom segmentation only. Never cite this table for monthly MSHR outputs. **Never filter by the raw `industry` column** — use `JOIN public.locations ON location_id` and filter on `business_type_new` instead (see `adhoc-report.md → Industry Classification`). |
 | `dbt.new_data_weekly` | Pre-aggregated national weekly table built on `dbt.temp_timeclock_data`. Reporting period = Sunday to Saturday. Full schema documented in the section below. | Weekly | Use for weekly time series and PR data requests. **Do not use for published wages — see wage caveat below.** |
 | `dbt.new_state_data_weekly` | Same as `new_data_weekly` but broken out by state. | Weekly | Use when state-level weekly breakdowns are needed. |
 
@@ -45,6 +45,89 @@ For full column definitions and SQL patterns, see `../mshr.md`.
 |---|---|---|---|
 | [Wages, Hiring & Turnover](https://homebase-staging.cloud.databricks.com/editor/notebooks/2248482107468255?o=373323366197249) | `D-Wage+Labour_cost` (monthly avg hourly wage by job, nationally and by industry) and `D-Hiring+Turnover` (monthly jobs added and archived per location consideration set), both from Jan 2019 forward | `cohort_month_start`, `cohort_year_start`, `cohort_month_end`, `cohort_year_end`, report cutoff date | Vlad Akimenko |
 | [DBT tables](https://homebase-staging.cloud.databricks.com/editor/notebooks/155412963220333?o=373323366197249) | `dbt.temp_timeclock_data`, `dbt.new_data_weekly`, `dbt.new_state_data_weekly` — enriched timeclock staging and pre-aggregated weekly tables used for ad hoc reports | Triggered on schedule or on demand before an ad hoc run | Vlad Akimenko |
+
+---
+
+## `dbt.temp_timeclock_data` — Full Column Reference
+
+Grain: one row per shift event per employee per location. Built by the [DBT notebook](https://homebase-staging.cloud.databricks.com/editor/notebooks/155412963220333?o=373323366197249) from `corona.shift_and_timecard_events` enriched with engagement, size, and geography data.
+
+> **Industry field warning:** The `industry` column in this table contains raw/legacy values and is NOT normalized (43 distinct strings for 13 actual categories). **Do not filter or group by `industry` directly.** Always join to `public.locations` on `location_id` and use `business_type_new` for the canonical industry grouping. The full mapping and CASE WHEN fallback are in `adhoc-report.md → Industry Classification` and `industry-classification.sql`.
+
+### Location & Geography
+
+| Column | Type | Definition |
+|---|---|---|
+| `location_id` | INT | Single physical business location. Primary join key to `public.locations`. |
+| `company_id` | INT | Parent company (may own multiple locations). |
+| `city` | STRING | City name (raw, from `public.locations`). |
+| `zip` | STRING | 5-digit ZIP code. |
+| `county_code` | STRING | FIPS county code (e.g. `41009` = Columbia County, OR). |
+| `state` | STRING | Standardized 2-letter state abbreviation (e.g. `'OR'`). Filtered to US states only in production — `state NOT IN ('Not USA', 'Unclassified')`. |
+| `msa` | STRING | Metropolitan Statistical Area label (e.g. `'Portland-Vancouver-Beaverton, OR-WA MSA'`). `'[STATE] NONMETROPOLITAN AREA'` for rural locations. |
+
+### Temporal
+
+| Column | Type | Definition |
+|---|---|---|
+| `event_date` | DATE | Date of the shift (`date(shifts.start_at)`). **Primary filter field for all labor metrics.** |
+| `shift_created_at` | TIMESTAMP | When the manager created the shift record. Signals business scheduling intent. |
+| `timecard_created_at` | TIMESTAMP | When the employee punched in. Null if no clock-in. |
+| `archived_at` | TIMESTAMP | When the employee-location job was archived (null = still active). |
+| `loc_archived_at` | TIMESTAMP | When the location was archived (null = still active). Filter `loc_archived_at IS NULL` to exclude closed locations. |
+
+### Employee & Job
+
+| Column | Type | Definition |
+|---|---|---|
+| `user_id` | INT | Employee identifier. `COUNT(DISTINCT user_id)` = Employees Working. |
+| `user_created_at` | TIMESTAMP | When the employee's Homebase account was created. |
+| `job_id` | INT | Employee-location roster entry from `postgres.jobs`. One employee can have multiple `job_id`s across different locations. |
+| `shift_id` | BIGINT | Shift record identifier. |
+| `timecard_id` | BIGINT | Timecard record identifier. **Null if `has_clock_in = 0`.** |
+
+### Labor Activity
+
+| Column | Type | Definition |
+|---|---|---|
+| `hours_scheduled` | DOUBLE | `(shifts.end_at − shifts.start_at) / 3600`. Always present — captures scheduling-only businesses. |
+| `hours_worked` | DOUBLE | `(timecards.end_at − timecards.start_at) / 3600`. **Null when `has_clock_in = 0`** (~24% of rows). Use for all MSHR labor metrics. |
+| `has_clock_in` | INT | `1` if a timecard exists for this shift; `0` otherwise. ~77% of rows are `1` in a typical window. |
+| `unscheduled` | INT | `1` if employee clocked in without a pre-created shift (no shift record). ~27% of rows. |
+
+### Wage
+
+| Column | Type | Definition |
+|---|---|---|
+| `hourly_wage_rate` | DOUBLE | Owner-reported wage rate. **Null for ~33% of rows.** Do NOT use for MSHR wage metrics — self-reported, overpopulated. Use the payroll cohort method instead. Valid range for filtering: `BETWEEN 7.25 AND 100`. |
+| `total_wages_earned` | DOUBLE | Owner-reported wages for this shift. **Null for ~43% of rows.** Same caveat — internal trend use only, not for published wages. |
+
+### Industry & Classification
+
+| Column | Type | Definition |
+|---|---|---|
+| `industry` | STRING | **Raw/legacy field — NOT normalized. 43 distinct values exist for 13 canonical categories.** Do not use for filtering or grouping. Join to `public.locations.business_type_new` via `location_id` instead. |
+| `naics_code` | STRING | 6-digit NAICS code. Null for ~2% of rows. Use as a fallback for industry mapping when `public.locations` is not joinable — see `industry-classification.sql`. |
+
+### Engagement Flags
+
+All flags sourced from `bizops.product_location_engagement_metrics`. Available at two snapshots to enable change analysis.
+
+| Column | Type | Definition |
+|---|---|---|
+| `engagement_boolean` | INT | `1` if location is engagement-active (7d TT or scheduling + 30d OAM activity). Current snapshot. |
+| `engagement_boolean_30d_ago` | INT | Same flag, 30 days prior. Combine with current to identify newly engaged / churned locations. |
+| `scheduling_engaged_boolean` | INT | `1` if scheduling-engaged (7d lookback). Current snapshot. |
+| `scheduling_engaged_boolean_30d_ago` | INT | Same flag, 30 days prior. |
+| `two_d_thirty_active_this_month` | BOOLEAN | `true` if location was 2D30-active this calendar month. |
+| `two_d_thirty_active_last_month` | BOOLEAN | `true` if location was 2D30-active last calendar month. |
+
+### Size & Age
+
+| Column | Type | Definition |
+|---|---|---|
+| `employee_count` | STRING | Pre-computed employee size band: `'1–4'`, `'5–9'`, `'10–19'`, `'20–49'`, `'50–99'`, `'100–249'`, `'250–499'`, `'Unknown'`. Based on a point-in-time snapshot, not the rolling 12-week average used by qualification flags. |
+| `location_age` | INT | Location age in **days** at the time of the event. Divide by 365.25 for years. |
 
 ---
 
