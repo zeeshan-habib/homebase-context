@@ -32,6 +32,7 @@ Read in this order:
 | `create_benchmark_table.sql` | Run each January in Databricks to recreate `corona.location_usage_benchmarks_from_aph_jan_[YYYY]` |
 | `indexed_values_query.sql` | Direct Databricks query for Employees Working, Hours Worked, Businesses Open — indexed values for 2024/2025/2026 with MoM ppt changes |
 | `create_new_data_weekly.sql` | Full CREATE TABLE SQL for `dbt.new_data_weekly` — reference for understanding the ad hoc pipeline |
+| `industry-classification.sql` | NAICS code → `business_type_new` mapping reference. Full CASE WHEN block for ad hoc queries + canonical list of all 13 broad industry classifications and their sub-categories |
 
 ## Which Workflow to Use
 
