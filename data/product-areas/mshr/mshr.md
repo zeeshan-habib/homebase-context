@@ -464,6 +464,8 @@ WHERE locations.state_cleaned NOT IN ('Not USA', 'Unclassified')
 
 Register as temp view: `spark.sql(...).createOrReplaceTempView('location_info')`
 
+> **`ss` = sample size.** In every hiring, turnover, and shifts query, `COUNT(DISTINCT location_info.location_id) AS ss` is the number of qualifying locations in that reporting period. This is what flows into the D-Hiring+Turnover sheet as the `ss` column and is used as the denominator when normalizing per-location (`timeseries_data / ss`). The `ss` value comes from `location_info`, which is built from `consideration_set` — so the sample size is always the set of US locations at companies that existed at least one year before the reporting month.
+
 ---
 
 ### Payroll Cohort Average by Job (National)
@@ -778,7 +780,7 @@ Data runs from January 2019. The Jan 2022 national `wage_rate` = **$11.4829** �
 | Column | Definition |
 |---|---|
 | `period_end` | Month end date (27th of reporting month) |
-| `ss` | Number of locations in the consideration set for that month |
+| `ss` | `COUNT(DISTINCT location_info.location_id)` — number of qualifying US locations in the period. Built from `consideration_set` → `location_info`. Used as the per-location normalization denominator: `timeseries_data / ss`. |
 | `timeseries_data` | Raw count of jobs added (HIRING) or jobs archived (TURNOVER) |
 
 Data runs from January 2019. Turnover data begins March 2019 (earlier months NULL).
