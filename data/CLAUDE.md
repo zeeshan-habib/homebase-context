@@ -21,12 +21,13 @@ Metric definitions, schema reference, and product-area data guides.
 | `product-areas/hrm/` | HRM data — NHP funnel gotchas, onboarding metrics, HR Docs engagement caveats |
 | `product-areas/payroll/` | Payroll data — key tables, MRR components, cohort definitions, join gotchas, churn groupings |
 | `product-areas/clover-embedded/` | Clover Embedded data — buy rate, rev share list, frontbook/backbook, activation funnel, plan caveats |
+| `product-areas/mshr/` | MSHR data — SQL definitions, table schemas, suppression rules, index formulas, production workflows |
 
 ## Navigation Rules
 
 - Always load `glossary.md` first for any metric question. It contains brief definitions and links to detailed files when more context is needed.
 - Only load `schema-reference.md` if the question requires knowing which tables to query, how to join them, or what columns exist.
-- Only load a product-area file if the question is specifically about that domain’s data nuances.
+- Only load a product-area file if the question is specifically about that domain's data nuances.
 
 ## Behavioral Rules
 
