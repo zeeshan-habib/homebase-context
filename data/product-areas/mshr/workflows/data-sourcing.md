@@ -36,7 +36,7 @@ For full column definitions and SQL patterns, see `../mshr.md`.
 | Table | Description | Refresh cadence | Notes |
 |---|---|---|---|
 | `dbt.temp_timeclock_data` | DBT-built enriched timeclock staging table. Richer than corona: includes engagement flags (`bizops.product_location_engagement_metrics`), size bands (`public.fact_locations_by_day`), county codes. | DBT refresh | Use for ad hoc custom segmentation only. Never cite this table for monthly MSHR outputs. |
-| `dbt.new_data_weekly` | Pre-aggregated national weekly table built on `dbt.temp_timeclock_data`. Reporting period = Sunday to Saturday. | Weekly | Use for weekly time series and PR data requests. Includes qualification flags per metric. |
+| `dbt.new_data_weekly` | Pre-aggregated national weekly table built on `dbt.temp_timeclock_data`. Reporting period = Sunday to Saturday. Full schema documented in the section below. | Weekly | Use for weekly time series and PR data requests. **Do not use for published wages — see wage caveat below.** |
 | `dbt.new_state_data_weekly` | Same as `new_data_weekly` but broken out by state. | Weekly | Use when state-level weekly breakdowns are needed. |
 
 ## Notebooks
@@ -45,6 +45,117 @@ For full column definitions and SQL patterns, see `../mshr.md`.
 |---|---|---|---|
 | [Wages, Hiring & Turnover](https://homebase-staging.cloud.databricks.com/editor/notebooks/2248482107468255?o=373323366197249) | `D-Wage+Labour_cost` (monthly avg hourly wage by job, nationally and by industry) and `D-Hiring+Turnover` (monthly jobs added and archived per location consideration set), both from Jan 2019 forward | `cohort_month_start`, `cohort_year_start`, `cohort_month_end`, `cohort_year_end`, report cutoff date | Vlad Akimenko |
 | [DBT tables](https://homebase-staging.cloud.databricks.com/editor/notebooks/155412963220333?o=373323366197249) | `dbt.temp_timeclock_data`, `dbt.new_data_weekly`, `dbt.new_state_data_weekly` — enriched timeclock staging and pre-aggregated weekly tables used for ad hoc reports | Triggered on schedule or on demand before an ad hoc run | Vlad Akimenko |
+
+---
+
+## `dbt.new_data_weekly` — Full Column Reference
+
+Grain: one row per complete Sunday–Saturday week, national aggregate. Rebuilt by the [DBT notebook](https://homebase-staging.cloud.databricks.com/editor/notebooks/155412963220333?o=373323366197249). Full CREATE TABLE SQL: `create_new_data_weekly.sql` in this folder.
+
+### Qualification Flags
+
+Each location-week is pre-scored with five flags. Metric calculations apply the appropriate flag as a filter.
+
+| Flag | Employee size band (12w avg) | Min weeks active (of last 52) | Additional requirement | Used by |
+|---|---|---|---|---|
+| `qualified_for_jobs` | 5–100 | ≥ 12 | Not archived this week | jobs_added, jobs_archived, hours_new_jobs |
+| `qualified_for_hours` | 5–100 | ≥ 12 | Not archived this week | hours_worked, active_location_count |
+| `qualified_for_turnover` | 10–100 | ≥ 12 | Not archived this week | users_added, users_archived, active_users, turnover rates |
+| `qualified_for_wages` | 5–100 | ≥ 12 | wage_coverage_ratio > 0.5; not archived this week | avg_nominal_wage, avg_weekly_pay |
+| `qualified_for_outlook` | 5–100 | ≥ 26 | Not archived this week | future_shifts, survival_52w |
+
+### Output Columns
+
+**Period**
+
+| Column | Type | Definition |
+|---|---|---|
+| `period_start` | DATE | Sunday of the reporting week |
+| `period_end` | DATE | Saturday of the reporting week |
+
+**Denominators**
+
+| Column | Type | Definition |
+|---|---|---|
+| `active_location_count` | INT | `COUNT(DISTINCT location_id)` WHERE `qualified_for_hours = 1` |
+| `active_users` | INT | `COUNT(DISTINCT user_id)` WHERE `qualified_for_turnover = 1` |
+| `avg_active_users_12w` | DOUBLE | 12-week rolling average of `active_users` — denominator for turnover/hire rates |
+| `total_shifts` | INT | Shift count WHERE `qualified_for_outlook = 1` |
+
+**Job flows** (`qualified_for_jobs`)
+
+| Column | Type | Definition |
+|---|---|---|
+| `jobs_added` | INT | Users at a location this week but not last week (1-week activity gap) |
+| `jobs_archived` | INT | Users at a location last week but not this week (activity gap) |
+| `hours_new_jobs` | DOUBLE | `SUM(hours_worked)` for new job-location pairs this week |
+
+**Turnover flows** (`qualified_for_turnover`)
+
+| Column | Type | Definition |
+|---|---|---|
+| `users_added` | INT | Users whose first-ever shift on Homebase falls in this week. One-time platform-level event. |
+| `users_archived` | INT | Users with `archived_at` falling in this week |
+
+**Hours** (`qualified_for_hours` / `qualified_for_wages`)
+
+| Column | Type | Definition |
+|---|---|---|
+| `hours_worked` | DOUBLE | `SUM(hours_worked)` WHERE `qualified_for_hours = 1` |
+| `hours_worked_with_wage` | DOUBLE | `SUM(hours_worked)` WHERE `hourly_wage_rate IS NOT NULL` AND `qualified_for_wages = 1` |
+
+**Wages** (`qualified_for_wages`) — ⚠️ internal trend use only
+
+| Column | Type | Definition |
+|---|---|---|
+| `avg_nominal_wage` | DOUBLE | `SUM(total_wages_earned) / SUM(hours_worked)` WHERE `hourly_wage_rate BETWEEN 7.25 AND 100`. Self-reported field — not the payroll cohort method. Do not cite externally. |
+| `avg_weekly_pay` | DOUBLE | `SUM(total_wages_earned) / COUNT(DISTINCT user_id)` WHERE `hourly_wage_rate BETWEEN 7.25 AND 100` |
+
+**Per-location averages**
+
+| Column | Type | Definition |
+|---|---|---|
+| `avg_hours_worked_per_loc` | DOUBLE | `hours_worked / active_location_count` |
+| `avg_jobs_added_per_loc` | DOUBLE | `jobs_added / active_location_count` |
+| `avg_jobs_archived_per_loc` | DOUBLE | `jobs_archived / active_location_count` |
+| `avg_net_jobs_added_per_loc` | DOUBLE | `(jobs_added - jobs_archived) / active_location_count` |
+| `shifts_per_loc` | DOUBLE | `total_shifts / active_location_count` |
+| `hours_worked_per_user` | DOUBLE | `hours_worked / active_users` |
+| `hours_worked_per_shift` | DOUBLE | `hours_worked / total_shifts` |
+| `employees_per_loc` | DOUBLE | `active_users / active_location_count` |
+
+**Workforce dynamics** (`qualified_for_turnover`)
+
+| Column | Type | Definition |
+|---|---|---|
+| `turnover_rate` | DOUBLE | `users_archived / avg_active_users_12w` |
+| `hire_rate` | DOUBLE | `users_added / avg_active_users_12w` |
+| `turnover_volatility_idx` | DOUBLE | `(users_added + users_archived) / avg_active_users_12w` |
+
+**Outlook / scheduling** (`qualified_for_outlook`)
+
+| Column | Type | Definition |
+|---|---|---|
+| `future_shifts` | INT | Shifts scheduled 1–4 weeks ahead of the reporting week |
+| `future_locs` | INT | Locations with future shifts scheduled |
+| `future_shift_growth` | DOUBLE | `future_shifts / total_shifts` |
+| `future_loc_growth` | DOUBLE | `future_locs / locs_curr` |
+| `surviving_businesses_this_week` | INT | Locations active both 52 weeks ago and this week |
+| `surviving_businesses_last_52w` | INT | Locations active 52 weeks ago (denominator for survival rate) |
+
+### ⚠️ Key Differences vs Monthly MSHR
+
+| Dimension | `dbt.new_data_weekly` | Monthly MSHR |
+|---|---|---|
+| **Reporting period** | Sunday–Saturday complete week | 28th of prior month → 27th of current month |
+| **`jobs_added`** | Activity gap: worked this week, not last (labor fluidity signal) | `MIN(postgres.jobs.created_at)` per `(user_id, location_id)` — first-ever hire date, one-time event. **Completely different concept.** |
+| **`jobs_archived`** | Activity gap: worked last week, not this week | `postgres.jobs.archived_at` in month, filtered via `whodunnit` to exclude system events |
+| **Wages** | `avg_nominal_wage` from self-reported `total_wages_earned` in `dbt.temp_timeclock_data`. Internal trend use only. | Payroll cohort method via `postgres.payroll_payroll_runs`. Matched cohort. Suppressed at `sample_size_jobs ≤ 20`. Only valid method for published wages. |
+| **Index / baseline** | None — raw counts and ratios | Indexed to January of current year; values = % above/below |
+| **Employee double-count** | Filtered to `highest_level_location` in `dbt.temp_timeclock_data` — no double-count | `corona` pipeline may count an employee at multiple locations |
+
+> **Wage rule:** For any wage figure published externally (monthly or ad hoc), always use the payroll cohort queries in `../mshr.md → ## Example Queries`. `avg_nominal_wage` from this table is for internal directional use only.
+
 
 ## Data Freshness Check
 
