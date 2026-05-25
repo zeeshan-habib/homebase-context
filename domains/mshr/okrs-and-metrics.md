@@ -11,7 +11,9 @@ refs:
 
 Load when answering questions about what MSHR measures and what success looks like for the Main Street Health Report.
 
-For full technical definitions (SQL logic, cohort rules, normalization, suppression), see `mshr.md`.
+For full technical definitions (SQL logic, cohort rules, normalization, suppression), see `data/product-areas/mshr/mshr.md`.
+
+For the canonical metric definitions used across the repo, see [`data/glossary.md`](../../data/glossary.md).
 
 > "Business" = location; "employee" = hourly worker; "clock-in" = timecard (employee punched in).
 
