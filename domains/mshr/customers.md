@@ -47,4 +47,4 @@ The internal audience transforms MSHR data into public-facing content. Claude an
 
 - All files in this domain are internal only — do not include anything that cannot be shared internally (no PII, no customer-identifiable data)
 - Metric definitions and table names are internal; the public reports will present derived outputs only
-- Claude should treat any query against this domain as an internal analytics task, not a public communication task
+
