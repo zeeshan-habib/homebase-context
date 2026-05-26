@@ -296,7 +296,7 @@ These are different metrics measuring different stages of workforce activity:
 |---|---|---|---|---|
 | `payroll_payroll_runs` | `postgres` | One row per payroll run; `location_id`, `payday` | Filtered by `year(payday)` and `month(payday)` | Used twice: once for cohort start (12 months prior), once for cohort end (reporting month) |
 | `shift_and_timecard_events` | `corona` | Event-level shift + timecard data; `hours_worked`, `total_wages_earned`, `job_id`, `location_id`, `timecard_created_at` | `location_id IN (cohort_start) AND location_id IN (cohort_end)` | Filtered to `timecard_created_at BETWEEN 2019-01-01 AND report_date`; equivalent grain to `dbt.temp_timeclock_data` |
-| `locations` | `public` | `business_type` for industry breakdown; `state_cleaned` for state breakdown; `msa` for MSA breakdown | `locations.location_id = job_averages.location_id` | Filtered: `state NOT IN ('Not USA', 'Unclassified')` |
+| `locations` | `public` | `business_type_new` for industry breakdown; `state_cleaned` for state breakdown; `msa` for MSA breakdown | `locations.location_id = job_averages.location_id` | Filtered: `state NOT IN ('Not USA', 'Unclassified')` |
 
 **Cohort definition:** a location qualifies if it appears in `postgres.payroll_payroll_runs` for both `(cohort_month_start, cohort_year_start)` AND `(cohort_month_end, cohort_year_end)` — exactly 12 months apart.
 
