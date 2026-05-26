@@ -217,6 +217,11 @@ df_prior_slim = df[df['yr'] == prior_yr  ][['iso_week'] + metric_cols].copy()
 
 df_delta = df_curr_slim.merge(df_prior_slim, on='iso_week', suffixes=('_curr', '_prior'))
 
+# Spark returns DECIMAL columns as decimal.Decimal objects — cast all to float first
+for col in metric_cols:
+    df_delta[f'{col}_curr']  = pd.to_numeric(df_delta[f'{col}_curr'],  errors='coerce')
+    df_delta[f'{col}_prior'] = pd.to_numeric(df_delta[f'{col}_prior'], errors='coerce')
+
 for col in metric_cols:
     df_delta[f'{col}_yoy_delta'] = df_delta[f'{col}_curr'] - df_delta[f'{col}_prior']
     df_delta[f'{col}_yoy_pct']   = (
