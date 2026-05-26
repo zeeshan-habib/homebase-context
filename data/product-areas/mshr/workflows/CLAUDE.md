@@ -87,15 +87,17 @@ Use when the request specifies a custom segment (state, city, MSA, industry, siz
 2. Industry join: always `JOIN public.locations loc ON t.location_id = loc.location_id` — use `loc.business_type_new` for broad industry, `loc.business_category_new` for sub-category. **Never use `t.industry` directly** — it is not normalized (43 raw strings for 13 categories)
 3. US filter: `loc.state_cleaned NOT IN ('Not USA', 'Unclassified')` or `t.state NOT IN ('Not USA', 'Unclassified')`
 4. Active locations filter: `t.loc_archived_at IS NULL` (exclude closed locations unless the request explicitly asks for historical closed data)
-5. Qualification flags — apply the correct flag(s) for the metric requested:
+5. Qualification flags — **`qualified_for_*` columns do not exist in `dbt.temp_timeclock_data`.** They are pre-computed in `dbt.new_data_weekly` only. For all ad hoc queries against `dbt.temp_timeclock_data`, replicate them inline using `employee_count` (band string) and `location_age` (days):
 
-| Metric | Flag to apply | Employee size band | Min weeks active |
+| Metric | Inline WHERE filter | Employee bands | Min age |
 |---|---|---|---|
-| Employees Working, Hours Worked | `qualified_for_hours = 1` | 5–100 | ≥ 12 of last 52 |
-| Jobs Added, Jobs Archived | `qualified_for_jobs = 1` | 5–100 | ≥ 12 of last 52 |
-| Turnover, Users Added | `qualified_for_turnover = 1` | 10–100 | ≥ 12 of last 52 |
+| Employees Working, Hours Worked | `employee_count IN ('5–9 employees','10–19 employees','20–49 employees','50–99 employees') AND location_age >= 84` | 5–99 | 84 days (12 wks) |
+| Jobs Added, Jobs Archived | Same as above | 5–99 | 84 days |
+| Turnover, Users Added | `employee_count IN ('10–19 employees','20–49 employees','50–99 employees') AND location_age >= 84` | 10–99 | 84 days |
 | Wages | Payroll cohort method only — do not use `dbt` tables | — | — |
-| Future shifts, Survival | `qualified_for_outlook = 1` | 5–100 | ≥ 26 of last 52 |
+| Future shifts, Survival | Same as hours filter + `location_age >= 182` (26 wks) | 5–99 | 182 days |
+
+All confirmed `employee_count` string values: `'0 employees'`, `'1–4 employees'`, `'5–9 employees'`, `'10–19 employees'`, `'20–49 employees'`, `'50–99 employees'`, `'100–249 employees'`, `'250–499 employees'`, `'500–999 employees'`, `'Unknown'`.
 
 6. Industry segmentation: use the `industry-classification.sql` CASE WHEN block when `public.locations` is not joinable; otherwise use `loc.business_type_new`
 7. Output: Databricks-ready SQL. Use Python (PySpark or `%sql` blocks) when the query has multiple dependent steps, date arithmetic, or looping across periods
