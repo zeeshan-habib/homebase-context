@@ -52,6 +52,8 @@ For full column definitions and SQL patterns, see `../mshr.md`.
 
 Grain: one row per shift event per employee per location. Built by the [DBT notebook](https://homebase-staging.cloud.databricks.com/editor/notebooks/155412963220333?o=373323366197249) from `corona.shift_and_timecard_events` enriched with engagement, size, and geography data.
 
+> **Qualification flags do NOT exist in this table.** The `qualified_for_hours`, `qualified_for_jobs`, `qualified_for_turnover`, `qualified_for_wages`, and `qualified_for_outlook` columns live in `dbt.new_data_weekly` only. Any query against `dbt.temp_timeclock_data` that references these columns will fail. Use the inline qualification pattern below instead.
+
 > **Industry field warning:** The `industry` column in this table contains raw/legacy values and is NOT normalized (43 distinct strings for 13 actual categories). **Do not filter or group by `industry` directly.** Always join to `public.locations` on `location_id` and use `business_type_new` for the canonical industry grouping. The full mapping and CASE WHEN fallback are in `adhoc-report.md → Industry Classification` and `industry-classification.sql`.
 
 ### Location & Geography
@@ -126,8 +128,29 @@ All flags sourced from `bizops.product_location_engagement_metrics`. Available a
 
 | Column | Type | Definition |
 |---|---|---|
-| `employee_count` | STRING | Pre-computed employee size band: `'1–4'`, `'5–9'`, `'10–19'`, `'20–49'`, `'50–99'`, `'100–249'`, `'250–499'`, `'Unknown'`. Based on a point-in-time snapshot, not the rolling 12-week average used by qualification flags. |
-| `location_age` | INT | Location age in **days** at the time of the event. Divide by 365.25 for years. |
+| `employee_count` | STRING | Pre-computed employee size band. Confirmed distinct values (from `public.locations` snapshot): `'0 employees'`, `'1–4 employees'`, `'5–9 employees'`, `'10–19 employees'`, `'20–49 employees'`, `'50–99 employees'`, `'100–249 employees'`, `'250–499 employees'`, `'500–999 employees'`, `'Unknown'`. For the standard MSHR 5–99 range, filter: `employee_count IN ('5–9 employees', '10–19 employees', '20–49 employees', '50–99 employees')`. |
+| `location_age` | INT | Location age in **days** at the time of the event. Divide by 365.25 for years. Use `location_age >= 84` (84 days = 12 weeks) as the inline proxy for the minimum-weeks-active threshold. |
+
+### Inline Qualification Pattern for `dbt.temp_timeclock_data`
+
+Because `qualified_for_*` flags do not exist here, apply these filters in the `WHERE` clause of every ad hoc query. They replicate the intent of the pre-computed flags in `dbt.new_data_weekly`.
+
+```sql
+-- Replicates qualified_for_hours / qualified_for_jobs (5–99 employees, >= 12 weeks active)
+WHERE employee_count IN (
+    '5–9 employees',
+    '10–19 employees',
+    '20–49 employees',
+    '50–99 employees'
+)
+AND location_age >= 84        -- 12 weeks * 7 days
+AND loc_archived_at IS NULL   -- exclude closed locations
+
+-- For qualified_for_turnover (10–100 employees), replace the IN list with:
+-- employee_count IN ('10–19 employees', '20–49 employees', '50–99 employees')
+```
+
+**Note:** `location_age >= 84` is a point-in-time proxy for "active in ≥ 12 of the last 52 weeks." It is a reasonable approximation for city/segment ad hoc work but will include some locations that were inactive for extended periods. For national published MSHR outputs, use `dbt.new_data_weekly` where the flags are pre-computed precisely.
 
 ---
 
