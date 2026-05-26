@@ -199,40 +199,33 @@ def assign_period(dt):
 
 df['period'] = df['week_start'].apply(assign_period)
 
-# Align by ISO week for YoY comparison
 current_yr  = df['yr'].max()
 prior_yr    = current_yr - 1
 baseline_yr = current_yr - 2
 
-df_curr  = df[df['yr'] == current_yr ].set_index('iso_week')
-df_prior = df[df['yr'] == prior_yr   ].set_index('iso_week')
-df_base  = df[df['yr'] == baseline_yr].set_index('iso_week')
-
-common_weeks = df_curr.index.intersection(df_prior.index)
-
 METRICS = [
-    ('businesses_open', 'Businesses Open',          'raw count'),
-    ('emp_per_loc',     'Employees per Location',   'normalized'),
-    ('hrs_per_loc',     'Hours per Location',       'normalized'),
+    ('businesses_open', 'Businesses Open',        'raw count'),
+    ('emp_per_loc',     'Employees per Location',  'normalized'),
+    ('hrs_per_loc',     'Hours per Location',      'normalized'),
 ]
 
-# Build YoY delta dataframe
-delta_rows = []
-for w in common_weeks:
-    row = {'iso_week': w,
-           'week_start': df_curr.loc[w, 'week_start'],
-           'period': df_curr.loc[w, 'period']}
-    for col, _, _ in METRICS:
-        curr_val  = df_curr.loc[w, col]
-        prior_val = df_prior.loc[w, col]
-        row[f'{col}_curr']       = curr_val
-        row[f'{col}_prior']      = prior_val
-        row[f'{col}_yoy_delta']  = curr_val - prior_val
-        row[f'{col}_yoy_pct']    = ((curr_val - prior_val) / abs(prior_val) * 100
-                                    if prior_val != 0 else np.nan)
-    delta_rows.append(row)
+metric_cols = [col for col, _, _ in METRICS]
 
-df_delta = pd.DataFrame(delta_rows).sort_values('week_start')
+# Merge current and prior year on iso_week — avoids .loc scalar ambiguity
+df_curr_slim  = df[df['yr'] == current_yr][['iso_week', 'week_start', 'period'] + metric_cols].copy()
+df_prior_slim = df[df['yr'] == prior_yr  ][['iso_week'] + metric_cols].copy()
+
+df_delta = df_curr_slim.merge(df_prior_slim, on='iso_week', suffixes=('_curr', '_prior'))
+
+for col in metric_cols:
+    df_delta[f'{col}_yoy_delta'] = df_delta[f'{col}_curr'] - df_delta[f'{col}_prior']
+    df_delta[f'{col}_yoy_pct']   = (
+        (df_delta[f'{col}_curr'] - df_delta[f'{col}_prior'])
+        / df_delta[f'{col}_prior'].replace(0, np.nan).abs()
+        * 100
+    )
+
+df_delta = df_delta.sort_values('week_start').reset_index(drop=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Step 5: Statistical significance — YoY delta: event window vs baseline
