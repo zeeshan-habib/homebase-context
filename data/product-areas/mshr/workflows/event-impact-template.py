@@ -79,11 +79,15 @@ DATA_END     = str((POST_END or TODAY).date())
 has_during   = EVENT_START is not None and TODAY >= EVENT_START
 has_post     = EVENT_END   is not None and TODAY >  EVENT_END
 
+pre_end_date = (EVENT_START - pd.Timedelta(days=1) if EVENT_START else TODAY).date()
+during_str   = 'pending' if not has_during else f"{EVENT_START.date()} -> {EVENT_END.date()}"
+post_str     = 'pending' if not has_post   else f"up to {POST_END.date()}"
+
 print(f"Event     : {CONFIG['event_name']}  [{CONFIG['event_type']}]")
 print(f"Geography : {CONFIG['city'].title()}, {CONFIG['state']}")
-print(f"Pre-period: {PRE_START.date()} -> {(EVENT_START - pd.Timedelta(days=1) if EVENT_START else TODAY).date()}")
-print(f"During    : {'pending' if not has_during else f\"{EVENT_START.date()} -> {EVENT_END.date()}\"}")
-print(f"Post      : {'pending' if not has_post  else f\"up to {POST_END.date()}\"}")
+print(f"Pre-period: {PRE_START.date()} -> {pre_end_date}")
+print(f"During    : {during_str}")
+print(f"Post      : {post_str}")
 print(f"Data pull : {DATA_START} -> {DATA_END}\n")
 
 # ─────────────────────────────────────────────────────────────────────────────
