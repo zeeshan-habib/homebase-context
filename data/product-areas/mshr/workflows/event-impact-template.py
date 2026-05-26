@@ -11,7 +11,7 @@
 #   3. Seasonality removal: YoY delta (2026 value − 2025 value per week)
 #      removes the seasonal baseline, isolating event-driven signal
 #   4. Stat sig: t-test on YoY deltas in event window vs baseline window
-#      Significant result = growth is NOT seasonally explained → event-driven
+#      Significant result = growth is NOT seasonally explained -> event-driven
 #
 # Output:
 #   - Line chart: 3 years weekly overlay with event windows annotated
@@ -81,10 +81,10 @@ has_post     = EVENT_END   is not None and TODAY >  EVENT_END
 
 print(f"Event     : {CONFIG['event_name']}  [{CONFIG['event_type']}]")
 print(f"Geography : {CONFIG['city'].title()}, {CONFIG['state']}")
-print(f"Pre-period: {PRE_START.date()} → {(EVENT_START - pd.Timedelta(days=1) if EVENT_START else TODAY).date()}")
-print(f"During    : {'pending' if not has_during else f\"{EVENT_START.date()} → {EVENT_END.date()}\"}")
+print(f"Pre-period: {PRE_START.date()} -> {(EVENT_START - pd.Timedelta(days=1) if EVENT_START else TODAY).date()}")
+print(f"During    : {'pending' if not has_during else f\"{EVENT_START.date()} -> {EVENT_END.date()}\"}")
 print(f"Post      : {'pending' if not has_post  else f\"up to {POST_END.date()}\"}")
-print(f"Data pull : {DATA_START} → {DATA_END}\n")
+print(f"Data pull : {DATA_START} -> {DATA_END}\n")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Step 1: City discovery check (run first to confirm exact strings)
