@@ -126,7 +126,6 @@ WITH events AS (
         event_date,
         hours_worked,
         has_clock_in,
-        qualified_for_hours,
         YEAR(event_date)                      AS yr,
         DATE_TRUNC('week', event_date)        AS week_start,
         WEEKOFYEAR(event_date)                AS iso_week
@@ -135,6 +134,16 @@ WITH events AS (
       AND state        = '{CONFIG["state"]}'
       AND UPPER(city)  = '{CONFIG["city"]}'
       AND loc_archived_at IS NULL
+      -- Inline qualification: 5-99 employees, location at least 12 weeks old
+      -- dbt.temp_timeclock_data has no pre-computed qualified_for_* flags;
+      -- employee_count is a band string, location_age is in days
+      AND employee_count IN (
+          '5–9 employees',
+          '10–19 employees',
+          '20–49 employees',
+          '50–99 employees'
+      )
+      AND location_age >= 84
 ),
 weekly AS (
     SELECT
@@ -143,12 +152,10 @@ weekly AS (
         iso_week,
         COUNT(DISTINCT CASE WHEN has_clock_in = 1
                             THEN location_id END)                              AS businesses_open,
-        COUNT(DISTINCT CASE WHEN qualified_for_hours = 1
-                            THEN location_id END)                              AS active_locs,
-        COUNT(DISTINCT CASE WHEN qualified_for_hours = 1 AND has_clock_in = 1
+        COUNT(DISTINCT location_id)                                            AS active_locs,
+        COUNT(DISTINCT CASE WHEN has_clock_in = 1
                             THEN user_id END)                                  AS employees_working,
-        ROUND(SUM(CASE WHEN qualified_for_hours = 1
-                       THEN COALESCE(hours_worked, 0) ELSE 0 END), 2)         AS hours_worked
+        ROUND(SUM(COALESCE(hours_worked, 0)), 2)                              AS hours_worked
     FROM events
     GROUP BY yr, week_start, iso_week
 )
