@@ -241,10 +241,10 @@ print('─' * 90)
 sig_results = {}
 for col, label, _ in METRICS:
     delta_col = f'{col}_yoy_delta'
-    baseline_deltas = df_delta[df_delta['period'] == 'baseline'][delta_col].dropna().values
+    baseline_deltas = df_delta[df_delta['period'] == 'baseline'][delta_col].dropna().astype(float).values
 
     for period in ['pre-event', 'during', 'post-event']:
-        period_deltas = df_delta[df_delta['period'] == period][delta_col].dropna().values
+        period_deltas = df_delta[df_delta['period'] == period][delta_col].dropna().astype(float).values
         if len(period_deltas) < 2:
             continue
         if len(baseline_deltas) < 2:
