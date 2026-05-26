@@ -52,7 +52,9 @@ CONFIG = {
     # Event window — set to None if period has not happened yet
     'event_start' : '2026-06-14',  # first match in this city
     'event_end'   : '2026-07-19',  # last possible match / closing ceremony
-    'pre_weeks'   : 6,             # weeks before event_start to label as pre-event
+    'pre_weeks'   : 4,             # complete weeks of pre-event data to include,
+                                   # anchored to SAFE_END (last complete week available)
+                                   # — NOT relative to event_start
     'post_weeks'  : 6,             # weeks after event_end to label as post-event
 
     # Comparison years for seasonality removal (YoY delta)
@@ -72,8 +74,6 @@ CONFIG = {
 TODAY        = pd.Timestamp('today').normalize()
 EVENT_START  = pd.Timestamp(CONFIG['event_start']) if CONFIG['event_start'] else None
 EVENT_END    = pd.Timestamp(CONFIG['event_end'])   if CONFIG['event_end']   else None
-PRE_START    = (EVENT_START - pd.Timedelta(weeks=CONFIG['pre_weeks'])) if EVENT_START \
-               else (TODAY  - pd.Timedelta(weeks=CONFIG['pre_weeks']))
 POST_END     = (EVENT_END + pd.Timedelta(weeks=CONFIG['post_weeks'])) if EVENT_END else None
 
 # Incomplete week guard:
@@ -82,6 +82,13 @@ POST_END     = (EVENT_END + pd.Timedelta(weeks=CONFIG['post_weeks'])) if EVENT_E
 # Result: data is always capped at 2 full weeks before today.
 _current_week_start = TODAY - pd.Timedelta(days=TODAY.dayofweek)  # Monday of this week
 SAFE_END     = _current_week_start - pd.Timedelta(days=8)         # Last day of 2 weeks ago
+
+# PRE_START is anchored to SAFE_END — not EVENT_START.
+# This guarantees exactly pre_weeks complete weeks of pre-event data are available,
+# regardless of how far away the event is.
+# Example: SAFE_END=May 17, pre_weeks=4 -> PRE_START=April 20
+#          giving weeks Apr 20, Apr 27, May 4, May 11 — all complete.
+PRE_START    = SAFE_END - pd.Timedelta(weeks=CONFIG['pre_weeks']) + pd.Timedelta(days=1)
 DATA_END     = str((min(POST_END, SAFE_END) if POST_END else SAFE_END).date())
 DATA_START   = str((PRE_START - pd.DateOffset(years=len(CONFIG['prior_years']))).date())
 
