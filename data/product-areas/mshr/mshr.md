@@ -57,7 +57,7 @@ Two distinct reports are produced from this domain. They share metric definition
 
 ---
 
-> **Table reference convention:** `corona.*` and `dbt.*` tables are Databricks-specific paths. `postgres.*` and `public.*` tables are Redshift tables accessed via `prod_redshift_replica` (e.g. `prod_redshift_replica.postgres.jobs`). SQL in this file uses shorthand paths matching the Databricks query context.
+> **Table reference convention:** `corona.*`, `dbt.*`, and `operations.*` tables are Databricks-native schemas living under the `hive_metastore` catalog (e.g. `hive_metastore.corona.shift_and_timecard_events`). SQL in this file uses shorthand paths (without the catalog prefix) matching the Databricks query context where `hive_metastore` is the default catalog. `postgres.*` and `public.*` tables are Redshift tables accessed via `prod_redshift_replica` (e.g. `prod_redshift_replica.postgres.jobs`).
 
 ## Key Metrics
 
