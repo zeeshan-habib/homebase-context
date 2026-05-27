@@ -7,6 +7,8 @@ source: internal
 refs: []
 ---
 
+<!-- Load when: producing a scoped or event-driven ad hoc MSHR report -->
+
 # Ad Hoc MSHR Production Workflow
 
 ## Overview
