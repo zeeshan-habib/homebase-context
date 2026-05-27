@@ -5,3 +5,9 @@ command:
   - 0.0.0.0
   - --port
   - "8000"
+resources:
+  - name: mshr-warehouse
+    description: SQL warehouse for MSHR queries
+    sql_warehouse:
+      id: "16984dfe9a2c3705"
+      permission: "CAN_USE"

@@ -1,95 +1,85 @@
+import time
+import threading
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+api_app = FastAPI()
+
+api_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 
 
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    return """<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MSHR Dash</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+def _respond(data, loading=False):
+    return {"data": data, "loading": loading, "last_updated": time.time()}
 
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #f2f2ec;
-      color: #1e0b3a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+
+def _safe_get(key):
+    """Return (data, loading, error). Never raises."""
+    try:
+        import queries
+        cache = queries._cache
+        if key not in cache:
+            return None, True, None
+        fn = {"labor": queries.get_labor, "wages": queries.get_wages, "jobs": queries.get_jobs}[key]
+        return fn(), False, None
+    except Exception as e:
+        return None, False, str(e)
+
+
+@api_app.get("/labor")
+def labor():
+    data, loading, err = _safe_get("labor")
+    if err:
+        return {"data": None, "loading": False, "error": err, "last_updated": time.time()}
+    return _respond(data, loading=loading)
+
+
+@api_app.get("/wages")
+def wages():
+    data, loading, err = _safe_get("wages")
+    if err:
+        return {"data": None, "loading": False, "error": err, "last_updated": time.time()}
+    return _respond(data, loading=loading)
+
+
+@api_app.get("/jobs")
+def jobs():
+    data, loading, err = _safe_get("jobs")
+    if err:
+        return {"data": None, "loading": False, "error": err, "last_updated": time.time()}
+    return _respond(data, loading=loading)
+
+
+@api_app.get("/health")
+def health():
+    import queries
+    return {
+        "status": "ok",
+        "cached": list(queries._cache.keys()),
     }
 
-    header {
-      background: #7e3dd4;
-      color: #ffffff;
-      padding: 20px 40px;
-    }
 
-    header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
+def _warm():
+    """Background thread: populate all caches on startup."""
+    import queries
+    for fn in (queries.get_labor, queries.get_wages, queries.get_jobs):
+        try:
+            fn()
+        except Exception:
+            pass
 
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-    }
 
-    .card {
-      background: #ffffff;
-      border: 1px solid #e6e4d6;
-      border-radius: 8px;
-      padding: 48px 56px;
-      text-align: center;
-      max-width: 480px;
-      width: 100%;
-    }
+@app.on_event("startup")
+def startup():
+    threading.Thread(target=_warm, daemon=True).start()
 
-    .card h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1e0b3a;
-      margin-bottom: 12px;
-    }
 
-    .card p {
-      font-size: 1rem;
-      color: #605f56;
-      line-height: 1.6;
-    }
-
-    .badge {
-      display: inline-block;
-      margin-top: 24px;
-      background: #f1ecff;
-      color: #7e3dd4;
-      font-weight: 600;
-      font-size: 0.8rem;
-      padding: 6px 14px;
-      border-radius: 999px;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>MSHR Dash</h1>
-  </header>
-  <main>
-    <div class="card">
-      <h2>Hello from Databricks!</h2>
-      <p>Your Main Street Health Report dashboard is live and ready to build on.</p>
-      <span class="badge">Powered by Databricks Apps</span>
-    </div>
-  </main>
-</body>
-</html>"""
+# Mount order is critical: /api must come before the static catch-all
+app.mount("/api", api_app)
+app.mount("/", StaticFiles(directory="static", html=True))
