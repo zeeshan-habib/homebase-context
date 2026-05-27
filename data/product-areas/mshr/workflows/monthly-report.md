@@ -26,7 +26,7 @@ Use this workflow when **all four conditions are true:**
 - All three source tables confirm data through the cutoff date (see Pre-Flight Checklist below)
 - The master Excel workbook is accessible and up to date
 
-IF the request comes from Ray Sanza, Katie Dare, Vlad, or GTM **outside** of the monthly calendar → use `adhoc-report.md` instead.
+IF the request comes from Ray Sandza, Katie Daire, Vlad, or GTM **outside** of the monthly calendar → use `adhoc-report.md` instead.
 
 IF the request mentions an event (sporting event, natural disaster, policy announcement) → use `adhoc-report.md` and invoke `event-impact-template.py`.
 
@@ -66,7 +66,7 @@ Compute these once — they are used in every script:
 - [ ] Looker Explore `coronavirus_data_aph_jan_[current_year]` loads without error
 - [ ] Databricks notebook environment is accessible and warehouse `16984dfe9a2c3705` is running
 - [ ] Master Excel workbook (`Main Street Health Report - [year].xlsx`) is open and editable
-- [ ] Sign-off contacts reachable: **Ray Sanza** (narrative) and **Vlad** (data accuracy)
+- [ ] Sign-off contacts reachable: **Ray Sandza** (narrative) and **Vlad** (data accuracy)
 
 ---
 
@@ -193,7 +193,7 @@ Update each slide with final values from the Labor Activity and Wages Activity s
 
 **Step 8 — Review and publish**
 
-Ray Sanza: narrative framing and headline metric accuracy.
+Ray Sandza: narrative framing and headline metric accuracy.
 Vlad: data accuracy and suppression rule compliance.
 
 On approval: save final PPTX. Log it in the Cover sheet of the master Excel workbook with the publication date.
@@ -213,7 +213,7 @@ Run every item before Step 7 (PPTX assembly). Do not proceed to publishing if an
 - [ ] End-to-end trace: at least one metric traced from D-sheet value → Labor/Wages Activity calculation → PPTX slide value
 - [ ] Normalization order: hiring/turnover divided by `ss` first, then MoM change computed — not the reverse
 - [ ] Jan 2022 wage baseline: derived dynamically from the national query result, not hardcoded
-- [ ] Ray Sanza sign-off received before external distribution or publication
+- [ ] Ray Sandza sign-off received before external distribution or publication
 
 ---
 
@@ -230,5 +230,5 @@ Run every item before Step 7 (PPTX assembly). Do not proceed to publishing if an
 | Wages | Payroll cohort; denominator anchored to Jan 2022 for % framing | Same payroll cohort method — `dbt` tables never used for wages |
 | Primary labor table | `corona.shift_and_timecard_events` + benchmark join | `dbt.new_data_weekly` or `dbt.temp_timeclock_data` |
 | Output format | PPTX slide deck (fixed) | Varies: slide deck, CSV, one-pager, talking points |
-| Sign-off | Ray Sanza (required) + Vlad | Ray Sanza or Vlad |
+| Sign-off | Ray Sandza (required) + Vlad | Ray Sandza or Vlad |
 | Clarifying questions | None — scope is fixed | Ask all 4 questions before pulling any data |

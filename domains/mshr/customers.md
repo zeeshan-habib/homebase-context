@@ -1,5 +1,5 @@
 ---
-owner: ray-sanza, vlad
+owner: ray-sandza, vlad
 last_updated: 2026-05-14
 review_cadence: monthly
 next_review: 2026-06-14
@@ -29,8 +29,8 @@ These are the people who use this domain repo directly — they direct what gets
 
 | Stakeholder | Role | What they need from MSHR |
 |---|---|---|
-| Ray Sanza | Chief Strategy Officer (DRI) | Economy-level employment trends to frame Homebase's market narrative and GTM strategy |
-| Katie Dare | Chief Marketing Officer | PR narrative, press releases, and public-facing data points — needs the same economy-level signals as Ray, framed for media and external audiences |
+| Ray Sandza | Chief Strategy Officer (DRI) | Economy-level employment trends to frame Homebase's market narrative and GTM strategy |
+| Katie Daire | Chief Marketing Officer | PR narrative, press releases, and public-facing data points — needs the same economy-level signals as Ray, framed for media and external audiences |
 | Vlad Akimenko | Data / Analytics Lead | Metric definitions, table locations, production logic to run and QA the report |
 | GTM Team | Marketing / Revenue | Data points and narratives for press releases, sales collateral, and research publications |
 

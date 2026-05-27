@@ -46,7 +46,7 @@ Both tracks draw from the same underlying data and metric definitions. The ad ho
 4. **Excel auto-calculation** — Labor Activity and Wages Activity sheets automatically compute 7-day rolling averages, MoM changes, per-location normalization (÷ `ss`), and indexing to January from the D-sheets. No manual formula entry needed.
 5. **QA** — Validate data freshness, suppression thresholds (`sample_size_jobs > 20`), and MoM anomalies. See `workflows/monthly-report.md` for the full checklist.
 6. **PPTX assembly** — Update slides with computed values from Labor Activity and Wages Activity; write narrative following the title/subtitle/note formula documented in `mshr.md`.
-7. **Review** — Ray Sanza reviews narrative framing and headline metric accuracy; Vlad signs off on data accuracy and suppression compliance.
+7. **Review** — Ray Sandza reviews narrative framing and headline metric accuracy; Vlad signs off on data accuracy and suppression compliance.
 8. **Publish** — Save final PPTX; log it in the Cover sheet of the master Excel file with the publication date.
 
 ## Key Workflows
@@ -69,9 +69,8 @@ Both tracks draw from the same underlying data and metric definitions. The ad ho
 
 | Role | Person |
 |---|---|
-| DRI / Executive sponsor | Ray Sanza (Chief Revenue Officer) |
-| Data owner / production lead | Vlad (former manager) |
-| Analyst | Zeeshan Habib |
+| DRI / Executive sponsor | Ray Sandza (Chief Revenue Officer) |
+| Data owner / production lead | Vlad Akimenko |
 
 ## Cadence
 

@@ -1,6 +1,6 @@
 # homebase-context — AI Navigation Guide
 
-Curated context for Zee's Homebase consulting engagement. Three-layer architecture: global business context → domain knowledge → data definitions.
+Curated context for the Homebase consulting engagement. Three-layer architecture: global business context → domain knowledge → data definitions.
 
 ---
 

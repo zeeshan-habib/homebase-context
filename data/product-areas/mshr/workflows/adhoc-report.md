@@ -17,7 +17,7 @@ Ad hoc MSHR reports are produced on request from leadership or the GTM team. The
 
 ## When to Use This Workflow
 
-IF the request comes from Ray Sanza, Katie Dare, Vlad, or GTM outside of the monthly schedule → use this workflow.
+IF the request comes from Ray Sandza, Katie Daire, Vlad, or GTM outside of the monthly schedule → use this workflow.
 IF the request specifies a particular metric subset, geography, or time window → use this workflow.
 IF the request is "same as last month but for [specific segment]" → use this workflow.
 IF the request involves an event (sporting event, natural disaster, heatwave, policy change) → use this workflow **and** invoke `event-impact-template.py`.
@@ -60,7 +60,7 @@ IF the request involves an event (sporting event, natural disaster, heatwave, po
 
 ### 4. Output format and audience
 
-- Who receives this? (Ray Sanza for strategy, Katie Dare for PR/media, Vlad for internal QA, other)
+- Who receives this? (Ray Sandza for strategy, Katie Daire for PR/media, Vlad for internal QA, other)
 - Output format: slide deck, CSV data file, one-pager with narrative, talking points only?
 - Internal use or external publication? (suppression rules — `sample_size_jobs > 20` for wages — apply to anything external)
 
@@ -176,7 +176,7 @@ Before pulling any data, confirm with the requester:
 - What time window? (single month, rolling 3 months, full historical series, YoY comparison)
 - What geographic or sector cuts? (national / state / MSA / industry / city)
 - What output format? (slide deck, CSV data file, one-pager, talking points)
-- Who signs off before external use? (Ray Sanza or Vlad)
+- Who signs off before external use? (Ray Sandza or Vlad)
 
 **Step 2 — Select the right table**
 
@@ -224,7 +224,7 @@ Format per requester spec. Always include a methodology note citing:
 
 **Step 6 — Deliver and confirm**
 
-Ray Sanza or Vlad must confirm before any external use or distribution.
+Ray Sandza or Vlad must confirm before any external use or distribution.
 
 ---
 
@@ -276,4 +276,4 @@ CONFIG = {
 | Scope | Full metric set | Subset defined by request |
 | Time window | Prior full month | Flexible |
 | Output | Standard report format | Varies by request |
-| Sign-off | Ray Sanza | Ray Sanza or Vlad |
+| Sign-off | Ray Sandza | Ray Sandza or Vlad |

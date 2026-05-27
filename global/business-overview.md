@@ -1,5 +1,5 @@
 ---
-owner: Zee
+owner: internal
 last_updated: 2026-05-15
 review_cadence: quarterly
 next_review: 2026-08-15
