@@ -417,6 +417,8 @@ When a user asks to produce a report or a Databricks-integrated output, there ar
 
 **Always produce a Google Doc — never HTML.**
 
+#### Environment-Specific
+
 Workflow:
 1. Build the report as a `.docx` using `python-docx` (installed at `~/anaconda3/lib/python3.11/site-packages`)
 2. Base64-encode and upload via `mcp__claude_ai_Google_Drive__create_file` with `contentMimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"` — Drive auto-converts DOCX to Google Doc on open

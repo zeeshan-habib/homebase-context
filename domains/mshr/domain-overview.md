@@ -7,6 +7,8 @@ source: internal
 refs: []
 ---
 
+<!-- Load when: getting oriented to what MSHR is, its report tracks, production cycle, and domain boundaries -->
+
 # MSHR Domain Overview
 
 ## What MSHR Is
@@ -69,7 +71,7 @@ Both tracks draw from the same underlying data and metric definitions. The ad ho
 |---|---|
 | DRI / Executive sponsor | Ray Sanza (Chief Revenue Officer) |
 | Data owner / production lead | Vlad (former manager) |
-| Analyst | <!-- STUB: add name --> |
+| Analyst | Zeeshan Habib |
 
 ## Cadence
 

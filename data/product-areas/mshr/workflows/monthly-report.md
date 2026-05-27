@@ -7,6 +7,8 @@ source: internal
 refs: []
 ---
 
+<!-- Load when: producing the monthly MSHR report — end-to-end steps, checklist, and QA -->
+
 # Monthly MSHR Production Workflow
 
 ## Overview
