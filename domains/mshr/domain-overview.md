@@ -1,5 +1,5 @@
 ---
-owner: ray-sanza, vlad
+owner: ray-sandza, vlad
 last_updated: 2026-05-14
 review_cadence: monthly
 next_review: 2026-06-14
@@ -69,7 +69,7 @@ Both tracks draw from the same underlying data and metric definitions. The ad ho
 
 | Role | Person |
 |---|---|
-| DRI / Executive sponsor | Ray Sandza (Chief Revenue Officer) |
+| DRI / Executive sponsor | Ray Sandza (Chief Strategy Officer) |
 | Data owner / production lead | Vlad Akimenko |
 
 ## Cadence

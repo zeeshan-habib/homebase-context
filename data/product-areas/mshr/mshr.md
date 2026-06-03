@@ -42,7 +42,7 @@ Load when you need metric definitions, terminology, suppression rules, or the di
 | Users added (ad hoc weekly) | Employees whose very first shift on the platform (`MIN(event_date)` across all history) falls in the current reporting period. One-time event per employee. Reflects location workforce growth. | `jobs_added` — which measures recurring weekly activity gaps |
 | Payroll cohort | Locations that ran Homebase Payroll in both the reporting month AND the same month one year prior | All active locations |
 | Month | 28th of the prior calendar month to 27th of the current calendar month | Calendar month |
-| Industry | `locations.business_type_new` — the canonical industry field. 13 industries total. Do not use `locations.business_type`. | `business_type` (legacy) |
+| Industry | `locations.business_type_new` — the canonical industry field for new and ad hoc queries. 13 industries total. **Exception:** the monthly MSHR production workflow uses `locations.business_type` (legacy column) to match the reference notebook (`PR_Standard_EOM_Metrics.ipynb`). Do not change the monthly workflow to `business_type_new` without re-validating industry label parity against the notebook. | — |
 | Business category | `locations.business_category_new` — a granular subdivision within an industry. Multiple categories map to one industry. | Industry-level grouping |
 
 ---

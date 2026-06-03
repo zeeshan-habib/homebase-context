@@ -22,6 +22,6 @@ For the canonical metric definitions used across the repo, see [`data/glossary.m
 | **Employees Working** | Distinct employees with ≥1 clock-in in the reference week (7-day avg around the 12th) | Core labor demand signal; primary headline metric | Slide 3 |
 | **Hours Worked** | Total timecard hours (clock-out − clock-in) in the reference week | Captures intensity of labor, not just headcount; leads wage pressure signals | Slide 4 |
 | **Businesses Open** | Locations with ≥1 clock-in in the reference week | Small business activity / survival indicator; reported by Census region | Slide 5 |
-| **Hourly Wages** | Avg hourly wage, matched-cohort Payroll locations; expressed as % above Jan 2022 baseline ($11.4829) | Wage inflation signal for small business sector; industry-level breakdowns available | Slides 7–8 |
+| **Hourly Wages** | Avg hourly wage across matched-cohort Payroll locations, expressed as % above the Jan 2022 national average. See `data/product-areas/mshr/mshr.md` for the cohort definition and `data/product-areas/mshr/workflows/monthly-report.md` for how the baseline is derived each run. | Wage inflation signal for small business sector; industry-level breakdowns available | Slides 7–8 |
 | **Jobs Added** | MoM change in new roster jobs, normalized per location | Leading indicator of hiring appetite | Slide 9 |
 | **Jobs Archived** | MoM change in archived roster jobs, normalized per location | Proxy for employee turnover; lagging signal of labor market tightness | Slide 10 |
