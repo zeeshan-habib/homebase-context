@@ -9,7 +9,10 @@ api_app = FastAPI()
 
 api_app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://mshr-dash-373323366197249.aws.databricksapps.com",
+        "http://localhost:8000",
+    ],
     allow_methods=["GET"],
     allow_headers=["*"],
 )
