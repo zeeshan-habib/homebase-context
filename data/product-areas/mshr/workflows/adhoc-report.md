@@ -20,7 +20,7 @@ Ad hoc MSHR reports are produced on request from leadership or the GTM team. The
 IF the request comes from Ray Sandza, Katie Daire, Vlad, or GTM outside of the monthly schedule → use this workflow.
 IF the request specifies a particular metric subset, geography, or time window → use this workflow.
 IF the request is "same as last month but for [specific segment]" → use this workflow.
-IF the request involves an event (sporting event, natural disaster, heatwave, policy change) → use this workflow **and** invoke `event-impact-template.py`.
+IF the request involves an event (sporting event, natural disaster, heatwave, policy change) → use this workflow **and** see the [Event Impact Analysis](#event-impact-analysis) section below.
 
 ## Required Clarifying Questions
 
@@ -230,43 +230,16 @@ Ray Sandza or Vlad must confirm before any external use or distribution.
 
 ## Event Impact Analysis
 
-When the request describes a real-world event that may affect small business activity — sporting events, natural disasters, heatwaves, policy announcements, economic shocks — use the **`event-impact-template.py`** framework instead of writing a one-off query.
+When the request describes a real-world event that may affect small business activity — sporting events, natural disasters, heatwaves, policy announcements, economic shocks — use the event impact methodology.
 
 **When to invoke:** any request that mentions an event name, a disruption, or asks about impact before/during/after a specific period.
 
 **How to use:**
-1. Open `event-impact-template.py` in Databricks
-2. Edit only the `CONFIG` block at the top — everything else auto-derives:
+1. Read `event-impact-methodology.md` for the full statistical approach (YoY seasonality-adjusted delta, Welch's t-test, three-segment business model)
+2. Open `event-impact-template.py` in Databricks — this is the reference implementation of the methodology
+3. Edit only the `CONFIG` block at the top; all analysis steps auto-derive from it
 
-```python
-CONFIG = {
-    'event_name'  : 'Your Event Name',
-    'event_type'  : 'planned',        # planned | natural_disaster | economic | policy | other
-    'notes'       : 'Any context note',
-    'city'        : 'CITYNAME',       # UPPER case — verified via discovery query
-    'state'       : 'XX',
-    'event_start' : '2026-MM-DD',     # set to None if event hasn't started yet
-    'event_end'   : '2026-MM-DD',     # set to None if event hasn't ended yet
-    'pre_weeks'   : 6,
-    'post_weeks'  : 6,
-    'prior_years' : [2024, 2025],
-    'min_locs'    : 30,
-    'p_threshold' : 0.05,
-}
-```
-
-3. Run all cells — the template handles:
-   - City string discovery (Step 1)
-   - Weekly metrics pull with YoY alignment (Step 2)
-   - Thin sample flagging (Step 3)
-   - Period assignment: baseline / pre-event / during / post-event (Step 4)
-   - Seasonality removal: YoY delta per ISO week (Step 5)
-   - Statistical significance: Welch's t-test on event-window YoY delta vs baseline (Step 6)
-   - 3-panel visualization per metric (Step 7)
-
-**Pre-event-only runs:** if `event_start` is in the future, set `event_end` to `None`. The template will analyze only the pre-period and annotate the chart with a dashed "event start" line. This is the correct setup for analyzing anticipation effects or baseline conditions before a scheduled event.
-
-**Seasonality note:** the template removes seasonal effects by computing `YoY delta = current_year − prior_year` for the same ISO week. A statistically significant positive delta during the event window means activity is higher than what the seasonal baseline alone would predict — evidence of an event-driven effect rather than normal seasonal variation.
+See `event-impact-methodology.md → CONFIG Block` for a description of each parameter.
 
 ## Key Differences from Monthly Workflow
 
