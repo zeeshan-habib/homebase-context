@@ -1,26 +1,14 @@
-# MSHR Domain (Main Street Health Report)
+<!-- Load when: navigating the MSHR domain — match your question below and go directly to the file -->
 
-Aggregated small business economy report — employment, wages, hiring, and turnover.
+# MSHR Domain — Direct Routing
 
-## Domain Files
-
-| File | When to load |
+| If you're asked... | Go directly to |
 |---|---|
-| `domain-overview.md` | What MSHR is, how the report is produced, key workflows and stakeholders |
-| `customers.md` | Audience archetypes — who reads MSHR, what they need from it |
-| `okrs-and-metrics.md` | The six MSHR metrics — business definitions and which slide each appears on |
+| What is MSHR? What does it measure? How is the report produced? Who are the stakeholders? | `domain-overview.md` |
+| Who reads MSHR? What do they use it for? What questions do they bring? | `customers.md` |
+| What are the six metrics and how are they defined at a business level? Which slide does each appear on? | `okrs-and-metrics.md` |
 
-## Data Layer
-
-All technical content (SQL definitions, table schemas, computation logic, suppression rules, workflows) lives in `data/product-areas/mshr/`.
-
-| Resource | When to load |
-|---|---|
-| `data/product-areas/mshr/mshr.md` | Any Databricks query, calculation, or schema question |
-| `data/product-areas/mshr/data-model.md` | Key entities, data sources, join patterns |
-| `data/product-areas/mshr/workflows/` | Report production, data sourcing, ad hoc scoping |
-
-## Domain Owner
+**For anything technical** (SQL, table schemas, computation logic, workflows, qualification rules) → go to `data/product-areas/mshr/` — not here.
 
 - **PM:** Vlad Akimenko
 - **Slack:** #main_street_health_report
