@@ -28,7 +28,7 @@ MSHR data requests fall into one of the following types. Each type has a canonic
 | A specific segment, state, city, industry, custom time window, event-driven cut, or "ad hoc" | Ad Hoc |
 | Wages — any cut, any cadence | Always payroll cohort regardless of track |
 | Hiring or turnover — any cut | Always `### Hiring` / `### Turnover` queries from `../example-queries.md` regardless of track |
-| An event impact (sporting event, disaster, policy, etc.) | Event Impact — use `event-impact-template.py`, edit CONFIG block |
+| An event impact (sporting event, disaster, policy, etc.) | Event Impact — see `event-impact-methodology.md` for statistical approach; `event-impact-template.py` is the reference implementation |
 
 ---
 

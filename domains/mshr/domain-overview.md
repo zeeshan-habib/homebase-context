@@ -7,9 +7,9 @@ source: internal
 refs: []
 ---
 
-<!-- Load when: getting oriented to what MSHR is, its report tracks, production cycle, and domain boundaries -->
-
 # MSHR Domain Overview
+
+Load when getting oriented to what MSHR is, its report tracks, production cycle, and domain boundaries.
 
 ## What MSHR Is
 

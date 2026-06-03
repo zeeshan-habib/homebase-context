@@ -7,9 +7,9 @@ source: internal
 refs: []
 ---
 
-<!-- Load when: understanding who uses MSHR, their roles, and what they need from the report -->
-
 # MSHR Customers & Stakeholders
+
+Load when understanding who uses MSHR, their roles, and what they need from the report.
 
 ## Audience Architecture
 
