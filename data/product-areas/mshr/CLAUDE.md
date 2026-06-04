@@ -13,7 +13,7 @@
 | How to produce a scoped or event-driven ad hoc report | `workflows/adhoc-report.md` |
 | Which methodology to use for a given request type; qualification flags; efficiency rules | `workflows/code-generation-protocol.md` |
 | Known SQL/Python bugs and required Databricks notebook structure | `workflows/known-pitfalls.md` |
-| How the monthly PPTX is built; D-sheet structure; calculation layers | `report-production.md` |
+| How the monthly PPTX is built; D-sheet structure; calculation layers; extracting charts from Databricks HTML exports | `report-production.md` |
 | Data freshness, refreshing source tables, recreating the January benchmark table | `workflows/data-sourcing.md` |
 | How to analyze event impact on small businesses | `workflows/event-impact-methodology.md` |
 

@@ -199,3 +199,29 @@ The report is written for external audiences (press, economists, policy analysts
 - Slide 2 (At A Glance) synthesizes all six metrics into a one-paragraph month title and three segment takeaways (Workforce & Hours / Industry & Region / Hiring & Turnover).
 
 **Report cadence:** The PPTX was historically published in two packs (Pack 1 = labor metrics shortly after month end; Pack 2 = wages + hiring/turnover ~2 weeks later). Starting with the 2025 series this merged into a single monthly release.
+
+---
+
+## Chart Extraction from Databricks HTML Exports
+
+Databricks notebooks export as HTML files containing a `NOTEBOOK_MODEL` JavaScript variable with base64-encoded content. Charts are embedded inside as `image/png` data. To extract:
+
+```python
+import re, base64, urllib.parse, json
+
+with open('notebook_export.html', 'r') as f:
+    content = f.read()
+
+m = re.search(r"NOTEBOOK_MODEL\s*=\s*'(.*?)'", content, re.DOTALL)
+nb = json.loads(urllib.parse.unquote(base64.b64decode(m.group(1)).decode('utf-8')))
+
+# Charts are in commands[n]['results']['data'] as type=mimeBundle items
+for cmd in nb['commands']:
+    for item in (cmd.get('results') or {}).get('data', []):
+        if item.get('type') == 'mimeBundle' and 'image/png' in item.get('data', {}):
+            img_bytes = base64.b64decode(item['data']['image/png'])
+            with open('chart.png', 'wb') as f:
+                f.write(img_bytes)
+```
+
+Step outputs (text, tables) are in `item['type'] == 'ansi'` items in the same `data` list.

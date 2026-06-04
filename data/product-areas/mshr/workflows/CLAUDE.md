@@ -36,7 +36,6 @@ Read in this order:
 | `event-impact-methodology.md` | Statistical methodology behind `event-impact-template.py` — YoY seasonality-adjusted delta, Welch's t-test, three-segment business model |
 | `code-generation-protocol.md` | Request type classification, monthly and ad hoc methodology details, efficiency rules, normalization rules |
 | `known-pitfalls.md` | 8 known bugs and required code structure for Databricks SQL/Python |
-| `output-formats.md` | How to deliver results — Google Doc vs Databricks App, chart extraction from HTML exports |
 
 ## Which Workflow to Use
 
